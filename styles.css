@@ -17,11 +17,12 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--text);background:var(-
 img{max-width:100%;display:block}
 a{color:inherit}
 
-/* banderas por imagen (reemplazan emojis, que no renderizan en Windows) */
-.flagimg{height:16px;width:auto;border-radius:2px;display:inline-block;flex:0 0 auto;
-  vertical-align:-3px;background:#e9e9e9;box-shadow:0 0 0 1px rgba(0,0,0,.10)}
-.mname .flagimg{height:18px;margin-right:6px;vertical-align:-4px}
-.cb__team .flagimg{height:30px;vertical-align:-5px;box-shadow:0 0 0 1px rgba(255,255,255,.4)}
+/* banderas por imagen (reemplazan emojis, que no renderizan en Windows)
+   tamaño FIJO + object-fit:cover → todas uniformes sin importar su proporción */
+.flagimg{width:24px;height:16px;object-fit:cover;border-radius:2px;display:inline-block;flex:0 0 auto;
+  vertical-align:-3px;background:#e9e9e9;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+.mname .flagimg{width:27px;height:18px;margin-right:6px;vertical-align:-4px}
+.cb__team .flagimg{width:45px;height:30px;vertical-align:-6px;box-shadow:0 0 0 1px rgba(255,255,255,.4)}
 
 /* franja bandera Bolivia (guiño Convocados) */
 .flagbar{height:5px;width:100%;
