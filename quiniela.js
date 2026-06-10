@@ -327,13 +327,18 @@ function renderGroups(){
     const card=document.createElement('div'); card.className='group';
     card.innerHTML=`<div class="group__head"><h4>Grupo ${g}</h4><span class="group__hint">1.º · 2.º clasifican · 3.º repechaje</span></div>`;
     const rk=state.rank[g]||{}; const rankedCount=Object.keys(rk).length;
+    const thirdsFull = state.thirds.length>=8;
     GROUPS[g].forEach(id=>{
       const t=team(id); const r=rk[id];
-      const out=!r && rankedCount>=3;        // marcados los 3 → el 4.º queda eliminado
+      const isFourth   = !r && rankedCount>=3;                               // 4.º: sin puesto y grupo completo
+      const isThirdOut = r===3 && thirdsFull && !state.thirds.includes(id);  // 3.º que no entró en los 8 mejores
+      const out = isFourth || isThirdOut;
+      const rankCls = (r && !isThirdOut) ? ' r'+r : '';   // 1°/2° y 3.º elegido conservan su color
+      const badge = r ? r+'°' : (isFourth ? '4°' : '');
       const row=document.createElement('div');
-      row.className='grow'+(r?(' r'+r):'')+(out?' out':'');
+      row.className='grow'+rankCls+(out?' out':'');
       row.innerHTML=`${flagTag(t)}<span class="gname">${t.name}</span>
-        <span class="grow__rank">${r?r+'°':(out?'✗':'')}</span>`;
+        <span class="grow__rank">${badge}</span>`;
       row.onclick=()=>cycleRank(g,id);
       card.appendChild(row);
     });
