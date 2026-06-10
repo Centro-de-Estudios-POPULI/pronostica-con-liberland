@@ -8,20 +8,24 @@ const CONFIG = {
   WHATSAPP_INVITE_URL: "https://chat.whatsapp.com/"
 };
 
-/* ====== 48 SELECCIONES (genéricas, editables) ====== */
+/* ====== banderas por imagen (flagcdn) — los emojis no renderizan en Windows ====== */
+const flagURL = iso => `https://flagcdn.com/h40/${iso}.png`;
+const flagTag = (iso, name) => `<img class="flagimg" src="${flagURL(iso)}" alt="${name}" loading="lazy" />`;
+
+/* ====== 48 SELECCIONES (genéricas, editables) — [nombre, ISO] ====== */
 const COUNTRIES = [
-  ["🇦🇷","Argentina"],["🇧🇷","Brasil"],["🇺🇾","Uruguay"],["🇨🇴","Colombia"],
-  ["🇨🇱","Chile"],["🇵🇪","Perú"],["🇪🇨","Ecuador"],["🇵🇾","Paraguay"],
-  ["🇧🇴","Bolivia"],["🇻🇪","Venezuela"],["🇫🇷","Francia"],["🇩🇪","Alemania"],
-  ["🇪🇸","España"],["🇮🇹","Italia"],["🇵🇹","Portugal"],["🇳🇱","Países Bajos"],
-  ["🇧🇪","Bélgica"],["🇬🇧","Inglaterra"],["🇭🇷","Croacia"],["🇩🇰","Dinamarca"],
-  ["🇨🇭","Suiza"],["🇷🇸","Serbia"],["🇵🇱","Polonia"],["🇦🇹","Austria"],
-  ["🇸🇪","Suecia"],["🇳🇴","Noruega"],["🇹🇷","Turquía"],["🇺🇦","Ucrania"],
-  ["🇺🇸","Estados Unidos"],["🇲🇽","México"],["🇨🇦","Canadá"],["🇨🇷","Costa Rica"],
-  ["🇯🇵","Japón"],["🇰🇷","Corea del Sur"],["🇸🇦","Arabia Saudita"],["🇮🇷","Irán"],
-  ["🇦🇺","Australia"],["🇶🇦","Catar"],["🇲🇦","Marruecos"],["🇸🇳","Senegal"],
-  ["🇳🇬","Nigeria"],["🇬🇭","Ghana"],["🇨🇲","Camerún"],["🇪🇬","Egipto"],
-  ["🇩🇿","Argelia"],["🇨🇮","Costa de Marfil"],["🇹🇳","Túnez"],["🇿🇦","Sudáfrica"]
+  ["Argentina","ar"],["Brasil","br"],["Uruguay","uy"],["Colombia","co"],
+  ["Chile","cl"],["Perú","pe"],["Ecuador","ec"],["Paraguay","py"],
+  ["Bolivia","bo"],["Venezuela","ve"],["Francia","fr"],["Alemania","de"],
+  ["España","es"],["Italia","it"],["Portugal","pt"],["Países Bajos","nl"],
+  ["Bélgica","be"],["Inglaterra","gb-eng"],["Croacia","hr"],["Dinamarca","dk"],
+  ["Suiza","ch"],["Serbia","rs"],["Polonia","pl"],["Austria","at"],
+  ["Suecia","se"],["Noruega","no"],["Turquía","tr"],["Ucrania","ua"],
+  ["Estados Unidos","us"],["México","mx"],["Canadá","ca"],["Costa Rica","cr"],
+  ["Japón","jp"],["Corea del Sur","kr"],["Arabia Saudita","sa"],["Irán","ir"],
+  ["Australia","au"],["Catar","qa"],["Marruecos","ma"],["Senegal","sn"],
+  ["Nigeria","ng"],["Ghana","gh"],["Camerún","cm"],["Egipto","eg"],
+  ["Argelia","dz"],["Costa de Marfil","ci"],["Túnez","tn"],["Sudáfrica","za"]
 ];
 const MAX = 32;
 const selected = new Set();
@@ -30,11 +34,11 @@ let posicion = "";
 /* ====== render grilla de selecciones ====== */
 const teamsEl = document.getElementById("teams");
 const counterEl = document.getElementById("counter");
-COUNTRIES.forEach(([flag, name]) => {
+COUNTRIES.forEach(([name, iso]) => {
   const el = document.createElement("div");
   el.className = "team";
   el.dataset.name = name;
-  el.innerHTML = `<span class="flag">${flag}</span><span>${name}</span>`;
+  el.innerHTML = `${flagTag(iso, name)}<span>${name}</span>`;
   el.addEventListener("click", () => toggle(name, el));
   teamsEl.appendChild(el);
 });

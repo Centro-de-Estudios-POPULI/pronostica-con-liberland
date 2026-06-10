@@ -4,21 +4,25 @@
    Luego se enchufa login / Google Sheets y el cálculo de puntos.
    ========================================================= */
 
-/* ---- 48 selecciones (genéricas, editar al conocerse el sorteo) ---- */
+/* ---- banderas por imagen (flagcdn) — los emojis no renderizan en Windows ---- */
+const flagURL = iso => `https://flagcdn.com/h40/${iso}.png`;
+const flagTag = t => `<img class="flagimg" src="${flagURL(t.iso)}" alt="${t.name}" loading="lazy" />`;
+
+/* ---- 48 selecciones (genéricas, editar al conocerse el sorteo) — [nombre, ISO] ---- */
 const TEAMS = [
-  ["🇦🇷","Argentina"],["🇧🇷","Brasil"],["🇺🇾","Uruguay"],["🇨🇴","Colombia"],
-  ["🇨🇱","Chile"],["🇵🇪","Perú"],["🇪🇨","Ecuador"],["🇵🇾","Paraguay"],
-  ["🇧🇴","Bolivia"],["🇻🇪","Venezuela"],["🇫🇷","Francia"],["🇩🇪","Alemania"],
-  ["🇪🇸","España"],["🇮🇹","Italia"],["🇵🇹","Portugal"],["🇳🇱","Países Bajos"],
-  ["🇧🇪","Bélgica"],["🏴","Inglaterra"],["🇭🇷","Croacia"],["🇩🇰","Dinamarca"],
-  ["🇨🇭","Suiza"],["🇷🇸","Serbia"],["🇵🇱","Polonia"],["🇦🇹","Austria"],
-  ["🇸🇪","Suecia"],["🇳🇴","Noruega"],["🇹🇷","Turquía"],["🇺🇦","Ucrania"],
-  ["🇺🇸","Estados Unidos"],["🇲🇽","México"],["🇨🇦","Canadá"],["🇨🇷","Costa Rica"],
-  ["🇯🇵","Japón"],["🇰🇷","Corea del Sur"],["🇸🇦","Arabia Saudita"],["🇮🇷","Irán"],
-  ["🇦🇺","Australia"],["🇶🇦","Catar"],["🇲🇦","Marruecos"],["🇸🇳","Senegal"],
-  ["🇳🇬","Nigeria"],["🇬🇭","Ghana"],["🇨🇲","Camerún"],["🇪🇬","Egipto"],
-  ["🇩🇿","Argelia"],["🇨🇮","Costa de Marfil"],["🇹🇳","Túnez"],["🇿🇦","Sudáfrica"]
-].map(([flag,name],id)=>({id,flag,name}));
+  ["Argentina","ar"],["Brasil","br"],["Uruguay","uy"],["Colombia","co"],
+  ["Chile","cl"],["Perú","pe"],["Ecuador","ec"],["Paraguay","py"],
+  ["Bolivia","bo"],["Venezuela","ve"],["Francia","fr"],["Alemania","de"],
+  ["España","es"],["Italia","it"],["Portugal","pt"],["Países Bajos","nl"],
+  ["Bélgica","be"],["Inglaterra","gb-eng"],["Croacia","hr"],["Dinamarca","dk"],
+  ["Suiza","ch"],["Serbia","rs"],["Polonia","pl"],["Austria","at"],
+  ["Suecia","se"],["Noruega","no"],["Turquía","tr"],["Ucrania","ua"],
+  ["Estados Unidos","us"],["México","mx"],["Canadá","ca"],["Costa Rica","cr"],
+  ["Japón","jp"],["Corea del Sur","kr"],["Arabia Saudita","sa"],["Irán","ir"],
+  ["Australia","au"],["Catar","qa"],["Marruecos","ma"],["Senegal","sn"],
+  ["Nigeria","ng"],["Ghana","gh"],["Camerún","cm"],["Egipto","eg"],
+  ["Argelia","dz"],["Costa de Marfil","ci"],["Túnez","tn"],["Sudáfrica","za"]
+].map(([name,iso],id)=>({id,name,iso}));
 
 /* ---- 12 grupos A–L de 4 ---- */
 const GLETTERS = ["A","B","C","D","E","F","G","H","I","J","K","L"];
@@ -172,7 +176,7 @@ function renderGroups(){
       const t=team(id); const r=(state.rank[g]||{})[id];
       const row=document.createElement('div');
       row.className='grow'+(r?(' r'+r):'');
-      row.innerHTML=`<span class="flag">${t.flag}</span><span class="gname">${t.name}</span>
+      row.innerHTML=`${flagTag(t)}<span class="gname">${t.name}</span>
         <span class="grow__rank">${r?r+'°':''}</span>`;
       row.onclick=()=>cycleRank(g,id);
       card.appendChild(row);
@@ -215,7 +219,7 @@ function renderThirds(){
     const full = state.thirds.length>=8 && !sel;
     const chip=document.createElement('div');
     chip.className='third'+(sel?' sel':'')+(full?' disabled':'');
-    chip.innerHTML=`<span class="flag">${t.flag}</span><span>${t.name}</span>`;
+    chip.innerHTML=`${flagTag(t)}<span>${t.name}</span>`;
     chip.onclick=()=>{
       const i=state.thirds.indexOf(id);
       if(i>=0) state.thirds.splice(i,1);
@@ -275,7 +279,7 @@ function teamRow(key,slot,info,winId){
   const isWin = known && winId===info.id;
   row.className='mteam'+(isWin?' win':'');
   row.dataset.slot=slot;
-  const name = known ? `<span class="mname">${team(info.id).flag} ${team(info.id).name}</span>`
+  const name = known ? `<span class="mname">${flagTag(team(info.id))} ${team(info.id).name}</span>`
                      : `<span class="mname tbd">${info.label}</span>`;
   const sc=state.scores[key]||{};
   const val = sc[slot]!=null ? sc[slot] : '';
@@ -320,7 +324,7 @@ function championBanner(){
   const champ=getWinner('final',0);
   const b=document.createElement('div'); b.className='champion-banner';
   b.innerHTML=`<div class="cb__k">Tu campeón</div>
-    <div class="cb__team">${champ!=null?team(champ).flag+' '+team(champ).name:'🏆 Por definir'}</div>`;
+    <div class="cb__team">${champ!=null?flagTag(team(champ))+' '+team(champ).name:'🏆 Por definir'}</div>`;
   return b;
 }
 
