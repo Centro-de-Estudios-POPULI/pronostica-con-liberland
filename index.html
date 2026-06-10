@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pronosticá con Stanley</title>
+<meta name="description" content="Comprá tu Stanley, registrá tu comprobante y armá tus pronósticos de la temporada futbolera. Subí en el ranking y ganá premios Stanley." />
+<meta property="og:title" content="Pronosticá con Stanley" />
+<meta property="og:description" content="Armá tu equipo de pronósticos y ganá premios Stanley." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="assets/logo-stanley-vertical.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ===== FRANJA BOLIVIA (guiño Convocados) ===== -->
+<div class="flagbar" aria-hidden="true"></div>
+
+<!-- ===== NAV ===== -->
+<header class="nav">
+  <img class="nav__logo" src="assets/logo-stanley-horizontal.png" alt="Stanley 1913" />
+  <nav class="nav__links">
+    <a class="nav__link" href="#como-funciona">Cómo se juega</a>
+    <a class="nav__link" href="#premios">Premios</a>
+    <a class="nav__link" href="jugar.html">Mi quiniela</a>
+    <a class="nav__link" href="https://stanley1913.bo/collections/convocados-stanley" target="_blank" rel="noopener">Tienda</a>
+    <a href="#registro" class="btn btn--sm">Participar</a>
+  </nav>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero pitch">
+  <div class="hero__inner">
+    <span class="kicker">Temporada futbolera 2026</span>
+    <h1 class="display">PRONOSTICÁ<br><span class="display__accent">CON STANLEY</span></h1>
+    <p class="hero__lead">Comprá tu Stanley, armá tus pronósticos de la temporada y demostrá que la tenés clara. Cuantos más aciertos, más alto en el ranking — y más cerca de los premios Stanley.</p>
+
+    <div class="countdown" id="countdown" aria-label="Cuenta regresiva para el cierre de inscripciones">
+      <div class="cd__item"><span id="cd-d">--</span><small>días</small></div>
+      <div class="cd__item"><span id="cd-h">--</span><small>hs</small></div>
+      <div class="cd__item"><span id="cd-m">--</span><small>min</small></div>
+      <div class="cd__item"><span id="cd-s">--</span><small>seg</small></div>
+    </div>
+    <p class="countdown__label">Cierre de inscripciones</p>
+
+    <div class="hero__cta">
+      <a href="#registro" class="btn btn--lg">Quiero participar</a>
+      <a href="https://stanley1913.bo/collections/convocados-stanley" class="btn btn--lg btn--ghost" target="_blank" rel="noopener">Ver la colección Convocados</a>
+    </div>
+    <p class="hero__legal">Promoción oficial de Stanley Bolivia (Openbrands S.R.L.). No está asociada, patrocinada ni avalada por ningún torneo, selección, organización o competición oficial.</p>
+  </div>
+</section>
+
+<!-- ===== CÓMO FUNCIONA ===== -->
+<section class="section" id="como-funciona">
+  <h2 class="h2">¿Cómo se juega?</h2>
+  <div class="steps">
+    <article class="step">
+      <span class="step__n">1</span>
+      <h3>Comprá tu Stanley</h3>
+      <p>Conseguí tu Stanley en <a href="https://stanley1913.bo/collections/convocados-stanley" target="_blank" rel="noopener" style="color:var(--tan-dark);font-weight:700">stanley1913.bo</a> durante el período de la promoción y guardá tu comprobante.</p>
+    </article>
+    <article class="step">
+      <span class="step__n">2</span>
+      <h3>Registrate</h3>
+      <p>Entrá acá, cargá tus datos y subí la foto de tu comprobante. Todo en un solo paso.</p>
+    </article>
+    <article class="step">
+      <span class="step__n">3</span>
+      <h3>Armá tus pronósticos</h3>
+      <p>Elegí tus 32 selecciones, el campeón, la figura y más. Cada acierto suma puntos.</p>
+    </article>
+    <article class="step">
+      <span class="step__n">4</span>
+      <h3>Subí y ganá</h3>
+      <p>Pasá el corte, entrá a la comunidad y competí hasta el final por premios Stanley.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ===== PREMIOS ===== -->
+<section class="section section--cream" id="premios">
+  <h2 class="h2">Tu equipo Stanley</h2>
+  <p class="section__lead">Cada producto juega su posición. A lo largo de la temporada se reparten <strong>hasta 15 premios Stanley</strong>: 5 intermedios y 10 finales para los mejores del ranking.</p>
+  <div class="prizes">
+    <article class="prize">
+      <div class="prize__media prize__media--green"></div>
+      <span class="tag">El Arquero</span>
+      <h3>Water Jug · 7,6 L</h3>
+      <p>El que te salva siempre.</p>
+    </article>
+    <article class="prize">
+      <div class="prize__media prize__media--bright"></div>
+      <span class="tag">El Todo Terreno</span>
+      <h3>Tumbler Térmico · 890 ml</h3>
+      <p>El que rinde los 90 minutos.</p>
+    </article>
+    <article class="prize">
+      <div class="prize__media prize__media--gray"></div>
+      <span class="tag">El del alargue</span>
+      <h3>Vaso Everyday · 473 ml</h3>
+      <p>Para los partidos que se viven hasta el final.</p>
+    </article>
+  </div>
+  <p class="section__foot">Y muchos más en juego para el Top 10 del ranking general.</p>
+</section>
+
+<!-- ===== REGISTRO ===== -->
+<section class="section pitch pitch--dark" id="registro">
+  <div class="form-card">
+    <header class="form-card__head">
+      <span class="kicker kicker--dark">Inscripción</span>
+      <h2 class="h2">Armá tu jugada</h2>
+      <p>Completá todo de una vez. Tus pronósticos quedan registrados al enviar.</p>
+    </header>
+
+    <form id="form" novalidate>
+      <!-- DATOS -->
+      <fieldset class="fs">
+        <legend class="fs__legend"><span class="fs__num">1</span> Tus datos</legend>
+        <div class="grid2">
+          <label class="field"><span>Nombre*</span><input name="nombre" required autocomplete="given-name" /></label>
+          <label class="field"><span>Apellido*</span><input name="apellido" required autocomplete="family-name" /></label>
+          <label class="field"><span>Documento (CI)*</span><input name="documento" required inputmode="numeric" /></label>
+          <label class="field"><span>WhatsApp*</span><input name="whatsapp" required inputmode="tel" placeholder="+591 7..." /></label>
+          <label class="field"><span>Correo*</span><input type="email" name="email" required autocomplete="email" /></label>
+          <label class="field"><span>Ciudad*</span><input name="ciudad" required autocomplete="address-level2" /></label>
+        </div>
+        <label class="field field--file">
+          <span>Comprobante de compra* <small>(foto o PDF, máx. 6 MB)</small></span>
+          <input type="file" name="comprobante" id="comprobante" accept="image/*,application/pdf" required />
+          <span class="file-hint" id="file-hint">Tocá para subir tu comprobante</span>
+        </label>
+      </fieldset>
+
+      <!-- PRONÓSTICOS -->
+      <fieldset class="fs">
+        <legend class="fs__legend"><span class="fs__num">2</span> Tus pronósticos</legend>
+
+        <div class="picker">
+          <div class="picker__head">
+            <h4>Elegí tus 32 selecciones</h4>
+            <span class="counter" id="counter">0 / 32</span>
+          </div>
+          <p class="hint">Sumás 1 punto por cada selección elegida que clasifique a la siguiente fase.</p>
+          <div class="teams" id="teams"><!-- JS --></div>
+        </div>
+
+        <div class="grid2">
+          <label class="field"><span>¿Quién será campeón?*</span>
+            <select name="campeon" id="campeon" required><option value="">Elegí entre tus selecciones</option></select>
+          </label>
+          <label class="field"><span>¿Quién llega a la final?*</span>
+            <select name="finalista" id="finalista" required><option value="">Elegí entre tus selecciones</option></select>
+          </label>
+          <label class="field"><span>La figura del torneo*</span>
+            <input name="figura" required placeholder="Nombre del jugador" />
+          </label>
+          <label class="field"><span>Desempate: goles en la primera fase*</span>
+            <input type="number" name="desempate" required min="0" max="500" inputmode="numeric" placeholder="Ej. 140" />
+          </label>
+        </div>
+
+        <div class="field">
+          <span>Tu posición en la cancha*</span>
+          <div class="chips" id="posicion">
+            <button type="button" class="chip" data-val="Arquero">Arquero</button>
+            <button type="button" class="chip" data-val="Defensa">Defensa</button>
+            <button type="button" class="chip" data-val="Medio">Medio</button>
+            <button type="button" class="chip" data-val="Delantero">Delantero</button>
+            <button type="button" class="chip" data-val="DT">DT</button>
+          </div>
+        </div>
+      </fieldset>
+
+      <label class="terms">
+        <input type="checkbox" name="terminos" id="terminos" required />
+        <span>Acepto las <a href="#bases">bases y condiciones</a> y el tratamiento de mis datos para esta promoción.</span>
+      </label>
+
+      <p class="form-error" id="form-error" hidden></p>
+      <button type="submit" class="btn btn--lg btn--full" id="submit">Enviar mi jugada</button>
+    </form>
+  </div>
+
+  <!-- CONFIRMACIÓN -->
+  <div class="confirm" id="confirm" hidden>
+    <div class="confirm__card">
+      <div class="confirm__check">✓</div>
+      <h2>¡Estás dentro!</h2>
+      <p>Tu jugada quedó registrada. Ahora armá tus pronósticos etapa por etapa y empezá a sumar puntos.</p>
+      <div class="hero__cta">
+        <a class="btn btn--lg" href="jugar.html">Ir a mi quiniela</a>
+        <a class="btn btn--lg" id="wa-cta" href="#" target="_blank" rel="noopener" style="background:var(--green)">Sumate a la comunidad</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== COMUNIDAD ===== -->
+<section class="section section--cream" id="comunidad">
+  <h2 class="h2">La comunidad sigue después del pitazo</h2>
+  <p class="section__lead">Quienes pasen el primer corte entran a la comunidad oficial de WhatsApp: rankings, recordatorios, retos y beneficios durante toda la temporada.</p>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer pitch pitch--dark" id="bases">
+  <img class="footer__logo" src="assets/logo-stanley-vertical.png" alt="Stanley" />
+  <div class="footer__legal">
+    <h3>Bases y condiciones</h3>
+    <p>Promoción organizada por <strong>Openbrands S.R.L.</strong>, representante oficial de Stanley 1913 en Bolivia. Válida para compras de productos Stanley realizadas en <a href="https://stanley1913.bo" target="_blank" rel="noopener">stanley1913.bo</a> y puntos de venta autorizados dentro del período indicado. Participan personas mayores de edad residentes en Bolivia. El registro requiere comprobante de compra válido. El ranking se define por aciertos; los desempates se resuelven por la pregunta de desempate y, de persistir, por orden de registro válido.</p>
+    <p><strong>Aviso de marca:</strong> promoción de carácter recreativo. No está asociada, patrocinada, avalada ni vinculada a ningún torneo, selección, organización o competición oficial. Todas las referencias a "selecciones", "temporada" o "fútbol" son de carácter genérico.</p>
+    <p>Consultas: <a href="mailto:info@openbrands.com.bo">info@openbrands.com.bo</a> · WhatsApp <a href="https://wa.me/59175133288" target="_blank" rel="noopener">+591 75133288</a></p>
+    <p class="footer__copy">© 2026 Openbrands S.R.L. · Stanley 1913 Bolivia · Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

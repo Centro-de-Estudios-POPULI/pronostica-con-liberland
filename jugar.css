@@ -1,0 +1,116 @@
+/* ===== Quiniela Stanley — componentes del juego ===== */
+
+/* barra superior de progreso/puntos */
+.gamebar{position:sticky;top:60px;z-index:40;background:var(--ink);color:#fff;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 24px;flex-wrap:wrap}
+.gamebar__title{font-family:'Montserrat',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:1px;font-size:14px}
+.gamebar__title small{display:block;font-weight:500;text-transform:none;letter-spacing:0;opacity:.7;font-size:12px}
+.gamebar__right{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.points{display:flex;align-items:center;gap:8px;background:var(--tan);color:#fff;
+  font-family:'Montserrat',sans-serif;font-weight:800;padding:7px 16px;border-radius:999px;font-size:14px}
+.points b{font-size:18px}
+.designtoggle{display:flex;align-items:center;gap:8px;font-size:12px;color:#cfcfcf;cursor:pointer;user-select:none}
+.designtoggle input{width:16px;height:16px;accent-color:var(--tan)}
+
+/* stepper de etapas */
+.stepper{display:flex;gap:8px;overflow-x:auto;padding:16px 24px;background:var(--mist);
+  border-bottom:1px solid var(--line-soft);scrollbar-width:thin}
+.step-btn{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:#fff;border:1.5px solid var(--line-soft);border-radius:10px;padding:10px 16px;cursor:pointer;
+  font-family:'Montserrat',sans-serif;font-weight:700;font-size:12.5px;color:var(--text);transition:.15s;min-width:104px;position:relative}
+.step-btn:hover{border-color:var(--tan)}
+.step-btn .sb__n{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;
+  background:var(--mist);color:var(--text);font-weight:900;font-size:13px}
+.step-btn.active{border-color:var(--ink);background:var(--ink);color:#fff}
+.step-btn.active .sb__n{background:var(--tan);color:#fff}
+.step-btn.done .sb__n{background:var(--green);color:#fff}
+.step-btn.locked{opacity:.5;cursor:not-allowed}
+.step-btn .sb__lock{font-size:11px}
+
+/* panel de etapa */
+.stage{display:none;max-width:1180px;margin:0 auto;padding:36px 24px 80px}
+.stage.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.stage__head{text-align:center;margin-bottom:30px}
+.stage__kicker{display:inline-block;background:var(--ink);color:var(--tan);font-family:'Montserrat',sans-serif;
+  font-weight:800;text-transform:uppercase;letter-spacing:1.5px;font-size:11px;padding:7px 14px;border-radius:4px}
+.stage__head h2{font-family:'Montserrat',sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(26px,4vw,42px);margin:12px 0 6px;color:var(--ink);line-height:1.05}
+.stage__head p{color:var(--text);max-width:620px;margin:0 auto;line-height:1.5}
+
+/* bloqueo de ronda */
+.locked-msg{max-width:520px;margin:30px auto;text-align:center;background:var(--mist);
+  border:1.5px dashed #c9bfac;border-radius:16px;padding:40px 28px}
+.locked-msg .lk__ico{font-size:42px}
+.locked-msg h3{font-family:'Montserrat',sans-serif;font-weight:800;color:var(--ink);margin:10px 0 6px;text-transform:uppercase}
+.locked-msg p{color:var(--text-soft);font-size:14px;line-height:1.5}
+.locked-msg .cd{font-family:'Anton',sans-serif;font-size:26px;color:var(--tan-dark);margin-top:14px;letter-spacing:1px}
+
+/* ---- fase de grupos ---- */
+.groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.group{background:#fff;border:1px solid var(--line-soft);border-radius:14px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.04)}
+.group__head{display:flex;align-items:center;justify-content:space-between;background:var(--ink);color:#fff;padding:10px 14px}
+.group__head h4{font-family:'Montserrat',sans-serif;font-weight:800;font-size:14px;letter-spacing:.5px}
+.group__hint{font-size:11px;color:#bdbdbd}
+.grow{display:flex;align-items:center;gap:10px;padding:11px 14px;border-top:1px solid var(--mist);cursor:pointer;
+  font-weight:600;font-size:14px;color:var(--ink);user-select:none;transition:background .12s}
+.grow:hover{background:var(--mist)}
+.grow .flag{font-size:20px;line-height:1}
+.grow .gname{flex:1}
+.grow__rank{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;font-family:'Montserrat',sans-serif;
+  font-weight:900;font-size:12px;background:var(--mist);color:var(--text-soft)}
+.grow.r1{background:rgba(1,166,106,.08)}
+.grow.r1 .grow__rank{background:var(--green);color:#fff}
+.grow.r2{background:rgba(1,166,106,.05)}
+.grow.r2 .grow__rank{background:var(--green-2);color:#fff}
+.grow.r3{background:rgba(181,150,119,.1)}
+.grow.r3 .grow__rank{background:var(--tan);color:#fff}
+
+/* selector de mejores terceros */
+.thirds{margin-top:30px;background:#fff;border:1px solid var(--line-soft);border-radius:14px;padding:22px}
+.thirds__head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.thirds__head h3{font-family:'Montserrat',sans-serif;font-weight:800;color:var(--ink);font-size:18px;text-transform:uppercase}
+.thirds__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.third{display:flex;align-items:center;gap:8px;border:1.5px solid #ddd;border-radius:8px;padding:9px 12px;
+  background:#fff;cursor:pointer;font-weight:600;font-size:13px;color:var(--ink);transition:.12s}
+.third:hover{border-color:var(--tan)}
+.third.sel{background:var(--tan);border-color:var(--tan);color:#fff}
+.third.disabled{opacity:.4;pointer-events:none}
+.thirds__empty{color:var(--text-soft);font-size:14px;padding:8px 0}
+
+/* ---- bracket / partidos ---- */
+.round{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.match{background:#fff;border:1px solid var(--line-soft);border-radius:14px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.04)}
+.match__head{display:flex;align-items:center;justify-content:space-between;background:var(--mist);padding:7px 14px;
+  font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-soft)}
+.match__head .mdate{font-weight:600}
+.mteam{display:flex;align-items:center;gap:10px;padding:12px 14px;border-top:1px solid var(--mist)}
+.mteam .flag{font-size:22px;line-height:1}
+.mteam .mname{flex:1;font-weight:700;color:var(--ink);font-size:14px}
+.mteam .mname.tbd{color:var(--text-soft);font-weight:500;font-style:italic}
+.mteam.win{background:rgba(1,166,106,.08)}
+.mteam.win .mname{color:var(--green-2)}
+.score{width:48px;height:40px;text-align:center;font-family:'Montserrat',sans-serif;font-weight:800;font-size:18px;
+  border:1.5px solid #ddd;border-radius:8px;color:var(--ink);outline:none;transition:border-color .15s}
+.score:focus{border-color:var(--tan)}
+.score:disabled{background:var(--mist);color:#bbb}
+.match__pen{display:flex;align-items:center;gap:8px;padding:8px 14px;border-top:1px dashed var(--line-soft);
+  font-size:12px;color:var(--text-soft)}
+.match__pen .pbtn{font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;padding:5px 10px;border-radius:999px;
+  border:1.5px solid #ddd;background:#fff;cursor:pointer;color:var(--ink)}
+.match__pen .pbtn.sel{background:var(--ink);color:var(--tan);border-color:var(--ink)}
+.champion-banner{max-width:420px;margin:28px auto 0;text-align:center;background:linear-gradient(160deg,#0c5a3a,#02402a);
+  color:#fff;border-radius:16px;padding:28px;box-shadow:var(--shadow)}
+.champion-banner .cb__k{font-family:'Montserrat',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:2px;font-size:12px;color:var(--tan)}
+.champion-banner .cb__team{font-family:'Anton',sans-serif;font-size:34px;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:12px}
+
+/* navegación inferior del wizard */
+.stage__nav{display:flex;justify-content:space-between;gap:12px;margin-top:34px}
+.stage__nav .spacer{flex:1}
+
+@media(max-width:560px){
+  .gamebar{top:54px;padding:10px 14px}
+  .stepper{padding:12px 14px}
+  .stage{padding:26px 14px 70px}
+  .groups{grid-template-columns:1fr}
+  .round{grid-template-columns:1fr}
+}

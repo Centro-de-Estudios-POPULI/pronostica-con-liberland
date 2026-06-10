@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tu quiniela · Pronosticá con Stanley</title>
+<meta name="description" content="Armá tus pronósticos etapa por etapa: fase de grupos, dieciseisavos, octavos, cuartos, semis y la final. Sumá puntos y ganá premios Stanley." />
+<link rel="icon" href="assets/logo-stanley-vertical.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="jugar.css" />
+</head>
+<body>
+
+<!-- franja Bolivia -->
+<div class="flagbar" aria-hidden="true"></div>
+
+<!-- NAV -->
+<header class="nav">
+  <img class="nav__logo" src="assets/logo-stanley-horizontal.png" alt="Stanley 1913" />
+  <nav class="nav__links">
+    <a class="nav__link" href="index.html">Inicio</a>
+    <a class="nav__link" href="https://stanley1913.bo/collections/convocados-stanley" target="_blank" rel="noopener">Tienda</a>
+  </nav>
+</header>
+
+<!-- BARRA DE JUEGO -->
+<div class="gamebar">
+  <div class="gamebar__title">Tu quiniela<small id="player-name">Modo invitado · se guarda en este dispositivo</small></div>
+  <div class="gamebar__right">
+    <label class="designtoggle" title="Desbloquea todas las etapas para revisar el diseño">
+      <input type="checkbox" id="design-mode" /> Modo diseño (ver todo)
+    </label>
+    <div class="points" title="Los puntos se calcularán al cierre de cada etapa">⚽ Puntos <b id="points">—</b></div>
+  </div>
+</div>
+
+<!-- STEPPER -->
+<div class="stepper" id="stepper"><!-- JS --></div>
+
+<!-- ETAPAS -->
+<main id="stages"><!-- JS genera cada .stage --></main>
+
+<!-- FOOTER -->
+<footer class="footer pitch pitch--dark">
+  <img class="footer__logo" src="assets/logo-stanley-vertical.png" alt="Stanley" />
+  <div class="footer__legal">
+    <h3>Cómo se juega</h3>
+    <p>Completá tus pronósticos en cada etapa antes del cierre. Sumás puntos por tus aciertos y subís en el ranking. Las etapas de llaves se habilitan a medida que se conocen los partidos.</p>
+    <p><strong>Aviso de marca:</strong> promoción recreativa de Stanley Bolivia (Openbrands S.R.L.). No está asociada ni avalada por ningún torneo u organización oficial. Las referencias a selecciones y fútbol son genéricas.</p>
+    <p>Consultas: <a href="mailto:info@openbrands.com.bo">info@openbrands.com.bo</a></p>
+    <p class="footer__copy">© 2026 Openbrands S.R.L. · Stanley 1913 Bolivia</p>
+  </div>
+</footer>
+
+<script src="quiniela.js"></script>
+</body>
+</html>
