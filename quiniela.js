@@ -1,119 +1,160 @@
 /* =========================================================
-   QUINIELA STANLEY — motor de pronósticos por etapas (diseño v1)
-   Sin backend: el estado se guarda en localStorage.
-   Luego se enchufa login / Google Sheets y el cálculo de puntos.
+   QUINIELA STANLEY — motor de pronósticos por etapas
+   Bracket real Mundial 2026 (partidos 73–104) con fechas reales.
+   Sin backend aún: el estado se guarda en localStorage.
    ========================================================= */
 
-/* ---- banderas por imagen (flagcdn) — los emojis no renderizan en Windows ---- */
+/* ---- banderas por imagen (flagcdn) ---- */
 const flagURL = iso => `https://flagcdn.com/h40/${iso}.png`;
 const flagTag = t => `<img class="flagimg" src="${flagURL(t.iso)}" alt="${t.name}" loading="lazy" />`;
 
-/* ---- 48 selecciones (genéricas, editar al conocerse el sorteo) — [nombre, ISO] ---- */
+/* ---- 48 selecciones en 12 grupos A–L  [nombre, ISO] ---- */
 const TEAMS = [
-  ["Argentina","ar"],["Brasil","br"],["Uruguay","uy"],["Colombia","co"],
-  ["Chile","cl"],["Perú","pe"],["Ecuador","ec"],["Paraguay","py"],
-  ["Bolivia","bo"],["Venezuela","ve"],["Francia","fr"],["Alemania","de"],
-  ["España","es"],["Italia","it"],["Portugal","pt"],["Países Bajos","nl"],
-  ["Bélgica","be"],["Inglaterra","gb-eng"],["Croacia","hr"],["Dinamarca","dk"],
-  ["Suiza","ch"],["Serbia","rs"],["Polonia","pl"],["Austria","at"],
-  ["Suecia","se"],["Noruega","no"],["Turquía","tr"],["Ucrania","ua"],
-  ["Estados Unidos","us"],["México","mx"],["Canadá","ca"],["Costa Rica","cr"],
-  ["Japón","jp"],["Corea del Sur","kr"],["Arabia Saudita","sa"],["Irán","ir"],
-  ["Australia","au"],["Catar","qa"],["Marruecos","ma"],["Senegal","sn"],
-  ["Nigeria","ng"],["Ghana","gh"],["Camerún","cm"],["Egipto","eg"],
-  ["Argelia","dz"],["Costa de Marfil","ci"],["Túnez","tn"],["Sudáfrica","za"]
+  // A
+  ["México","mx"],["Corea del Sur","kr"],["Sudáfrica","za"],["República Checa","cz"],
+  // B
+  ["Canadá","ca"],["Bosnia y Herzegovina","ba"],["Qatar","qa"],["Suiza","ch"],
+  // C
+  ["Brasil","br"],["Marruecos","ma"],["Haití","ht"],["Escocia","gb-sct"],
+  // D
+  ["Estados Unidos","us"],["Paraguay","py"],["Australia","au"],["Turquía","tr"],
+  // E
+  ["Alemania","de"],["Costa de Marfil","ci"],["Ecuador","ec"],["Curazao","cw"],
+  // F
+  ["Países Bajos","nl"],["Japón","jp"],["Suecia","se"],["Túnez","tn"],
+  // G
+  ["Bélgica","be"],["Egipto","eg"],["Irán","ir"],["Nueva Zelanda","nz"],
+  // H
+  ["España","es"],["Uruguay","uy"],["Arabia Saudita","sa"],["Cabo Verde","cv"],
+  // I
+  ["Francia","fr"],["Senegal","sn"],["Noruega","no"],["Irak","iq"],
+  // J
+  ["Argentina","ar"],["Argelia","dz"],["Austria","at"],["Jordania","jo"],
+  // K
+  ["Portugal","pt"],["Colombia","co"],["Uzbekistán","uz"],["RD del Congo","cd"],
+  // L
+  ["Inglaterra","gb-eng"],["Croacia","hr"],["Ghana","gh"],["Panamá","pa"]
 ].map(([name,iso],id)=>({id,name,iso}));
 
-/* ---- 12 grupos A–L de 4 ---- */
 const GLETTERS = ["A","B","C","D","E","F","G","H","I","J","K","L"];
 const GROUPS = {};
 GLETTERS.forEach((g,i)=>{ GROUPS[g] = [0,1,2,3].map(k=>i*4+k); });
 
-/* ---- plantilla de dieciseisavos (16 partidos). Siembra provisional:
-   se ajusta cuando se conozca el sorteo real. W=1.º, R=2.º, T=mejor 3.º ---- */
-const R32_TEMPLATE = [
-  [{t:'W',g:'A'},{t:'R',g:'B'}], [{t:'W',g:'C'},{t:'R',g:'D'}],
-  [{t:'W',g:'E'},{t:'R',g:'F'}], [{t:'W',g:'G'},{t:'R',g:'H'}],
-  [{t:'W',g:'I'},{t:'R',g:'J'}], [{t:'W',g:'K'},{t:'R',g:'L'}],
-  [{t:'W',g:'B'},{t:'T',i:0}],   [{t:'W',g:'D'},{t:'T',i:1}],
-  [{t:'W',g:'F'},{t:'T',i:2}],   [{t:'W',g:'H'},{t:'T',i:3}],
-  [{t:'W',g:'J'},{t:'T',i:4}],   [{t:'W',g:'L'},{t:'T',i:5}],
-  [{t:'R',g:'A'},{t:'T',i:6}],   [{t:'R',g:'C'},{t:'T',i:7}],
-  [{t:'R',g:'E'},{t:'R',g:'G'}], [{t:'R',g:'I'},{t:'R',g:'K'}]
+/* ---- BRACKET REAL (partidos 73–104) ----
+   slots:  W=1.º grupo · R=2.º grupo · T=mejor 3.º (i=índice 0–7)
+           WIN/LOSE = ganador/perdedor del partido nº m
+   d = fecha/hora real (America/La_Paz, -04:00)                         */
+const MATCHES = {
+  // Dieciseisavos (28 jun – 3 jul)
+  73:{e:'r32', a:{t:'R',g:'A'}, b:{t:'R',g:'B'},               d:'2026-06-28T15:00:00-04:00'},
+  76:{e:'r32', a:{t:'W',g:'C'}, b:{t:'R',g:'F'},               d:'2026-06-29T13:00:00-04:00'},
+  74:{e:'r32', a:{t:'W',g:'E'}, b:{t:'T',i:0,set:'A·B·C·D·F'}, d:'2026-06-29T16:30:00-04:00'},
+  75:{e:'r32', a:{t:'W',g:'F'}, b:{t:'R',g:'C'},               d:'2026-06-29T21:00:00-04:00'},
+  78:{e:'r32', a:{t:'R',g:'E'}, b:{t:'R',g:'I'},               d:'2026-06-30T13:00:00-04:00'},
+  77:{e:'r32', a:{t:'W',g:'I'}, b:{t:'T',i:1,set:'C·D·F·G·H'}, d:'2026-06-30T17:00:00-04:00'},
+  79:{e:'r32', a:{t:'W',g:'A'}, b:{t:'T',i:2,set:'C·E·F·H·I'}, d:'2026-06-30T21:00:00-04:00'},
+  80:{e:'r32', a:{t:'W',g:'L'}, b:{t:'T',i:3,set:'E·H·I·J·K'}, d:'2026-07-01T12:00:00-04:00'},
+  82:{e:'r32', a:{t:'W',g:'G'}, b:{t:'T',i:4,set:'A·E·H·I·J'}, d:'2026-07-01T16:00:00-04:00'},
+  81:{e:'r32', a:{t:'W',g:'D'}, b:{t:'T',i:5,set:'B·E·F·I·J'}, d:'2026-07-01T20:00:00-04:00'},
+  84:{e:'r32', a:{t:'W',g:'H'}, b:{t:'R',g:'J'},               d:'2026-07-02T14:00:00-04:00'},
+  83:{e:'r32', a:{t:'R',g:'K'}, b:{t:'R',g:'L'},               d:'2026-07-02T18:00:00-04:00'},
+  85:{e:'r32', a:{t:'W',g:'B'}, b:{t:'T',i:6,set:'E·F·G·I·J'}, d:'2026-07-02T22:00:00-04:00'},
+  88:{e:'r32', a:{t:'R',g:'D'}, b:{t:'R',g:'G'},               d:'2026-07-03T14:00:00-04:00'},
+  86:{e:'r32', a:{t:'W',g:'J'}, b:{t:'R',g:'H'},               d:'2026-07-03T18:30:00-04:00'},
+  87:{e:'r32', a:{t:'W',g:'K'}, b:{t:'T',i:7,set:'D·E·I·J·L'}, d:'2026-07-03T21:30:00-04:00'},
+  // Octavos (4–7 jul)
+  90:{e:'r16', a:{t:'WIN',m:73}, b:{t:'WIN',m:75}, d:'2026-07-04T13:00:00-04:00'},
+  89:{e:'r16', a:{t:'WIN',m:74}, b:{t:'WIN',m:77}, d:'2026-07-04T17:00:00-04:00'},
+  91:{e:'r16', a:{t:'WIN',m:76}, b:{t:'WIN',m:78}, d:'2026-07-05T16:00:00-04:00'},
+  92:{e:'r16', a:{t:'WIN',m:79}, b:{t:'WIN',m:80}, d:'2026-07-05T20:00:00-04:00'},
+  93:{e:'r16', a:{t:'WIN',m:83}, b:{t:'WIN',m:84}, d:'2026-07-06T15:00:00-04:00'},
+  94:{e:'r16', a:{t:'WIN',m:81}, b:{t:'WIN',m:82}, d:'2026-07-06T15:00:00-04:00'},
+  95:{e:'r16', a:{t:'WIN',m:86}, b:{t:'WIN',m:88}, d:'2026-07-07T12:00:00-04:00'},
+  96:{e:'r16', a:{t:'WIN',m:85}, b:{t:'WIN',m:87}, d:'2026-07-07T16:00:00-04:00'},
+  // Cuartos (9–11 jul)
+  97:{e:'qf', a:{t:'WIN',m:89}, b:{t:'WIN',m:90}, d:'2026-07-09T16:00:00-04:00'},
+  98:{e:'qf', a:{t:'WIN',m:93}, b:{t:'WIN',m:94}, d:'2026-07-10T15:00:00-04:00'},
+  99:{e:'qf', a:{t:'WIN',m:91}, b:{t:'WIN',m:92}, d:'2026-07-11T17:00:00-04:00'},
+  100:{e:'qf', a:{t:'WIN',m:95}, b:{t:'WIN',m:96}, d:'2026-07-11T21:00:00-04:00'},
+  // Semifinales (14–15 jul)
+  101:{e:'sf', a:{t:'WIN',m:97}, b:{t:'WIN',m:98},  d:'2026-07-14T15:00:00-04:00'},
+  102:{e:'sf', a:{t:'WIN',m:99}, b:{t:'WIN',m:100}, d:'2026-07-15T15:00:00-04:00'},
+  // 3.er puesto y Final (18–19 jul)
+  103:{e:'tercer', lbl:'3.er puesto', a:{t:'LOSE',m:101}, b:{t:'LOSE',m:102}, d:'2026-07-18T17:00:00-04:00'},
+  104:{e:'final',  lbl:'Final',       a:{t:'WIN',m:101},  b:{t:'WIN',m:102},  d:'2026-07-19T15:00:00-04:00'}
+};
+
+const STAGES = [
+  {id:'grupos', n:1, etapa:'Etapa 1', title:'Fase de grupos', short:'Grupos',
+   lead:'En cada grupo ordená 1.º, 2.º y 3.º (tocá cada equipo). Los dos primeros clasifican; después elegí los 8 mejores terceros.'},
+  {id:'r32', n:2, etapa:'Etapa 2', title:'Dieciseisavos', short:'16avos',
+   lead:'Del 28 jun al 3 jul · 16 partidos. Elegí quién avanza en cada llave; sumá puntos extra adivinando el marcador.'},
+  {id:'r16', n:3, etapa:'Etapa 3', title:'Octavos de final', short:'Octavos',
+   lead:'Del 4 al 7 jul · 8 partidos.'},
+  {id:'qf', n:4, etapa:'Etapa 4', title:'Cuartos de final', short:'Cuartos',
+   lead:'Del 9 al 11 jul · 4 partidos.'},
+  {id:'sf', n:5, etapa:'Etapa 5', title:'Semifinales', short:'Semis',
+   lead:'14 y 15 jul · 2 partidos.'},
+  {id:'final', n:6, etapa:'Etapa 6', title:'Final y 3.er puesto', short:'Final',
+   lead:'3.er puesto (18 jul) y la gran final (19 jul). Elegí al campeón y sumá puntos con los marcadores.'}
 ];
 
-/* ---- etapas ---- */
-const STAGES = [
-  {id:'grupos', n:1, etapa:'Etapa 1', title:'Fase de grupos',  short:'Grupos',
-   lead:'En cada grupo ordená 1.º, 2.º y 3.º (tocá cada equipo). Los dos primeros clasifican; después elegí los 8 mejores terceros.', locked:false},
-  {id:'r32', n:2, etapa:'Etapa 2', title:'Dieciseisavos', short:'16avos', count:16, prev:null,
-   lead:'Elegí quién avanza en cada llave (un toque). Después, si querés, sumá puntos extra adivinando el marcador.', locked:false},
-  {id:'r16', n:3, etapa:'Etapa 3', title:'Octavos de final', short:'Octavos', count:8, prev:'r32',
-   lead:'Se habilita cuando se definan los dieciseisavos.', locked:true},
-  {id:'qf',  n:4, etapa:'Etapa 4', title:'Cuartos de final', short:'Cuartos', count:4, prev:'r16',
-   lead:'Se habilita cuando se definan los octavos.', locked:true},
-  {id:'sf',  n:5, etapa:'Etapa 5', title:'Semifinales', short:'Semis', count:2, prev:'qf',
-   lead:'Se habilita cuando se definan los cuartos.', locked:true},
-  {id:'final', n:6, etapa:'Etapa 6', title:'La final', short:'Final', count:1, prev:'sf',
-   lead:'Elegí al campeón y al 3.er puesto. Sumá puntos extra con los marcadores.', locked:true}
-];
-const ROUND_ORDER = ['r32','r16','qf','sf','final'];
+const STAGE_MATCHES = {
+  r32:[73,76,74,75,78,77,79,80,82,81,84,83,85,88,86,87],
+  r16:[90,89,91,92,93,94,95,96],
+  qf:[97,98,99,100],
+  sf:[101,102],
+  final:[103,104]
+};
 
 /* ---- estado ---- */
-const KEY = 'stanley_quiniela_v1';
+const KEY = 'stanley_quiniela_v2';
 const DEFAULT = {rank:{}, thirds:[], scores:{}, adv:{}, design:false, active:'grupos'};
 let state = load();
 function load(){ try{ return Object.assign({}, DEFAULT, JSON.parse(localStorage.getItem(KEY))||{}); }catch(e){ return Object.assign({},DEFAULT); } }
 function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
 
 const team = id => (id==null?null:TEAMS[id]);
+const fmtFecha = iso => new Intl.DateTimeFormat('es-BO',
+  {weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'America/La_Paz'}
+).format(new Date(iso)).replace(',', '');
 
-/* ---- resolución de equipos clasificados ---- */
-function rankTeam(g, r){ // equipo con rank r en grupo g
+/* ---- resolución de equipos ---- */
+function rankTeam(g, r){
   const m = state.rank[g]||{};
   const found = Object.keys(m).find(id=>m[id]===r);
   return found==null?null:Number(found);
 }
-function thirdsTeam(i){ return state.thirds[i]!=null ? state.thirds[i] : null; }
-
-function matchDefs(round){
-  if(round==='r32') return R32_TEMPLATE;
-  const prev = STAGES.find(s=>s.id===round).prev;
-  const cnt = STAGES.find(s=>s.id===round).count;
-  return Array.from({length:cnt},(_,i)=>[
-    {t:'WIN',round:prev,m:i*2},{t:'WIN',round:prev,m:i*2+1}]);
-}
-
 function slotInfo(slot){
   switch(slot.t){
-    case 'W': return {id:rankTeam(slot.g,1), label:'1.º '+slot.g};
-    case 'R': return {id:rankTeam(slot.g,2), label:'2.º '+slot.g};
-    case 'T': return {id:thirdsTeam(slot.i), label:'Mejor 3.º'};
-    case 'WIN': return {id:getWinner(slot.round,slot.m), label:'Por definir'};
-    case 'LOSE': return {id:getLoser(slot.round,slot.m), label:'Por definir'};
+    case 'W':    return {id:rankTeam(slot.g,1), label:'1.º '+slot.g};
+    case 'R':    return {id:rankTeam(slot.g,2), label:'2.º '+slot.g};
+    case 'T':    return {id:(state.thirds[slot.i]!=null?state.thirds[slot.i]:null), label:'Mejor 3.º'};
+    case 'WIN':  return {id:getWinner(slot.m), label:'Ganador '+slot.m};
+    case 'LOSE': return {id:getLoser(slot.m),  label:'Perdedor '+slot.m};
   }
 }
-function resultOf(round,m){
-  const key = round+'-'+m;
-  const defs = matchDefs(round)[m];
-  const A = slotInfo(defs[0]).id, B = slotInfo(defs[1]).id;
-  const adv = state.adv[key];                 // quién avanza = decide la cascada
+function resultOf(num){
+  const def = MATCHES[num];
+  const A = slotInfo(def.a).id, B = slotInfo(def.b).id;
+  const adv = state.adv[num];
   if(A==null||B==null||!adv) return {A,B,win:null,lose:null};
   const win = adv==='a'?A:B, lose = adv==='a'?B:A;
   return {A,B,win,lose};
 }
-const getWinner = (round,m)=> resultOf(round,m).win;
-const getLoser  = (round,m)=> resultOf(round,m).lose;
+const getWinner = num => resultOf(num).win;
+const getLoser  = num => resultOf(num).lose;
 
-/* ---- completitud (para marcar etapas hechas) ---- */
+/* ¿el partido ya está cerrado? (pasó su hora de inicio) — modo diseño lo ignora */
+const matchLocked = num => !state.design && Date.now() >= new Date(MATCHES[num].d).getTime();
+
+/* ---- completitud ---- */
 function groupsDone(){
   const allGroups = GLETTERS.every(g=> rankTeam(g,1)!=null && rankTeam(g,2)!=null);
   return allGroups && state.thirds.length===8;
 }
-function roundDone(round){
-  const cnt = STAGES.find(s=>s.id===round).count;
-  for(let m=0;m<cnt;m++){ if(getWinner(round,m)==null) return false; }
-  return true;
+function roundDone(stageId){
+  return STAGE_MATCHES[stageId].every(num=> getWinner(num)!=null);
 }
 const isDone = id => id==='grupos' ? groupsDone() : roundDone(id);
 
@@ -126,15 +167,13 @@ const stagesEl  = document.getElementById('stages');
 function renderStepper(){
   stepperEl.innerHTML='';
   STAGES.forEach(s=>{
-    const locked = s.locked && !state.design;
     const b = document.createElement('button');
-    b.className='step-btn'+(s.id===state.active?' active':'')+(isDone(s.id)?' done':'')+(locked?' locked':'');
-    b.innerHTML = `<span class="sb__n">${isDone(s.id)?'✓':s.n}</span>${s.short}${locked?' <span class="sb__lock">🔒</span>':''}`;
-    if(!locked) b.onclick=()=>goto(s.id);
+    b.className='step-btn'+(s.id===state.active?' active':'')+(isDone(s.id)?' done':'');
+    b.innerHTML = `<span class="sb__n">${isDone(s.id)?'✓':s.n}</span>${s.short}`;
+    b.onclick=()=>goto(s.id);
     stepperEl.appendChild(b);
   });
 }
-
 function goto(id){ state.active=id; save(); renderStepper(); renderStage(id); window.scrollTo({top:0,behavior:'smooth'}); }
 
 function renderStage(id){
@@ -145,22 +184,10 @@ function renderStage(id){
   wrap.innerHTML = `<div class="stage__head">
       <span class="stage__kicker">${s.etapa}</span>
       <h2>${s.title}</h2><p>${s.lead}</p></div>`;
-
-  const locked = s.locked && !state.design;
-  if(locked){ wrap.appendChild(lockedMsg(s)); }
-  else if(id==='grupos'){ wrap.appendChild(renderGroups()); wrap.appendChild(renderThirds()); }
+  if(id==='grupos'){ wrap.appendChild(renderGroups()); wrap.appendChild(renderThirds()); }
   else { wrap.appendChild(renderRound(id)); }
-
   wrap.appendChild(stageNav(id));
   stagesEl.appendChild(wrap);
-}
-
-function lockedMsg(s){
-  const d=document.createElement('div'); d.className='locked-msg';
-  d.innerHTML=`<div class="lk__ico">🔒</div><h3>${s.title} — todavía no</h3>
-    <p>Esta etapa se abre cuando se conozcan los partidos de la ronda anterior. Te avisaremos para que cargues tus pronósticos a tiempo.</p>
-    <p style="margin-top:10px">Mientras tanto activá <strong>“Modo diseño”</strong> arriba para previsualizarla.</p>`;
-  return d;
 }
 
 /* ---- fase de grupos ---- */
@@ -184,21 +211,19 @@ function renderGroups(){
 }
 function cycleRank(g,id){
   const m = state.rank[g] = state.rank[g]||{};
-  if(m[id]){ // quitar
+  if(m[id]){
     const was=m[id]; delete m[id];
     if(was===3){ const i=state.thirds.indexOf(id); if(i>=0) state.thirds.splice(i,1); }
   } else {
     const used=Object.values(m);
     const free=[1,2,3].find(r=>!used.includes(r));
-    if(!free) return; // ya hay 3 marcados
+    if(!free) return;
     m[id]=free;
   }
   save(); renderStepper(); renderStage('grupos');
 }
-
 function renderThirds(){
   const box=document.createElement('div'); box.className='thirds';
-  // pool = equipos marcados como 3.º
   const pool=[];
   GLETTERS.forEach(g=>{ const id=rankTeam(g,3); if(id!=null) pool.push(id); });
   const n=state.thirds.length;
@@ -230,94 +255,84 @@ function renderThirds(){
 }
 
 /* ---- rondas de bracket ---- */
-function renderRound(round){
+function renderRound(stageId){
   const cont=document.createElement('div');
   const grid=document.createElement('div'); grid.className='round';
-  const defs=matchDefs(round);
-  defs.forEach((def,m)=> grid.appendChild(matchCard(round,m,def)));
+  STAGE_MATCHES[stageId].forEach(num=> grid.appendChild(matchCard(num)));
   cont.appendChild(grid);
-
-  if(round==='final'){
-    cont.appendChild(thirdPlaceCard());
-    cont.appendChild(championBanner());
-  }
+  if(stageId==='final') cont.appendChild(championBanner());
   return cont;
 }
 
-function matchCard(round,m,def){
-  const key=round+'-'+m;
-  const aI=slotInfo(def[0]), bI=slotInfo(def[1]);
-  const res=resultOf(round,m);
-  const card=document.createElement('div'); card.className='match'; card.dataset.key=key;
-  card.innerHTML=`<div class="match__head"><span>Partido ${m+1}</span><span class="mdate">Fecha por confirmar</span></div>`;
-  card.appendChild(advRow(key,'a',aI,res.win,round,m));
-  card.appendChild(advRow(key,'b',bI,res.win,round,m));
-  card.appendChild(matchFoot(key,round,m,aI,bI));
+function matchCard(num){
+  const def=MATCHES[num]; const key=String(num);
+  const aI=slotInfo(def.a), bI=slotInfo(def.b);
+  const res=resultOf(num);
+  const locked=matchLocked(num);
+  const card=document.createElement('div'); card.className='match'+(locked?' locked':''); card.dataset.key=key;
+  card.innerHTML=`<div class="match__head"><span>${def.lbl?def.lbl:'Partido '+num}</span><span class="mdate">${fmtFecha(def.d)}</span></div>`;
+  card.appendChild(advRow(key,'a',aI,res.win,num,locked));
+  card.appendChild(advRow(key,'b',bI,res.win,num,locked));
+  card.appendChild(matchFoot(key,num,aI,bI,locked));
   return card;
 }
-
-/* fila: tocar para elegir quién AVANZA (decide la cascada) */
-function advRow(key,slot,info,winId,round,m){
+function advRow(key,slot,info,winId,num,locked){
   const row=document.createElement('div');
   const known=info.id!=null;
   const isWin = known && winId===info.id;
-  row.className='mteam'+(known?' pick':' tbd-row')+(isWin?' win':'');
+  const clickable = known && !locked;
+  row.className='mteam'+(clickable?' pick':'')+(known?'':' tbd-row')+(isWin?' win':'');
   row.dataset.slot=slot;
   if(known){
     const t=team(info.id);
     row.innerHTML=`<span class="mname">${flagTag(t)} ${t.name}</span>
       <span class="advflag">${isWin?'✓ avanza':'avanza'}</span>`;
-    row.onclick=()=>chooseAdv(key,slot,round,m);
+    if(clickable) row.onclick=()=>chooseAdv(key,slot,num);
   } else {
     row.innerHTML=`<span class="mname tbd">${info.label}</span>`;
   }
   return row;
 }
-
-/* pie de la tarjeta: estado + acceso al marcador (puntos extra) */
-function matchFoot(key,round,m,aI,bI){
+function matchFoot(key,num,aI,bI,locked){
   const foot=document.createElement('div'); foot.className='match__foot';
+  if(locked){ foot.innerHTML=`<span class="foot-hint">🔒 Cerrado · ya se jugó o está en juego</span>`; return foot; }
   if(aI.id==null||bI.id==null){
-    foot.innerHTML=`<span class="foot-hint">${round==='r32'?'Completá la fase de grupos':'Se define con la ronda anterior'}</span>`;
+    foot.innerHTML=`<span class="foot-hint">${MATCHES[num].e==='r32'?'Completá la fase de grupos':'Se define con la ronda anterior'}</span>`;
     return foot; }
-  const adv=state.adv[key]; const sc=state.scores[key];
+  const adv=state.adv[num]; const sc=state.scores[num];
   if(!adv){ foot.innerHTML=`<span class="foot-hint">👆 Tocá quién avanza</span>`; return foot; }
   const hasScore = sc && sc.a!=null && sc.b!=null;
   const btn=document.createElement('button');
   btn.className='scorebtn'+(hasScore?' set':'');
   btn.innerHTML = hasScore ? `🎯 Marcador ${sc.a}–${sc.b} <small>editar</small>`
                            : `🎯 Adivinar marcador <small>+ puntos extra</small>`;
-  btn.onclick=()=>openScoreModal(key,round,m,false);
+  btn.onclick=()=>openScoreModal(key,num,false);
   foot.appendChild(btn);
   return foot;
 }
-
-function chooseAdv(key,slot,round,m){
-  const prev=state.adv[key];
-  state.adv[key]=slot;
-  // si cambió el que avanza, el marcador anterior pudo quedar contradictorio → se descarta
-  if(prev && prev!==slot) delete state.scores[key];
+function chooseAdv(key,slot,num){
+  const prev=state.adv[num];
+  state.adv[num]=slot;
+  if(prev && prev!==slot) delete state.scores[num];
   save();
-  refreshCard(key,round,m); renderStepper();
-  // recién elegido y sin marcador → ofrecer adivinarlo (puntos extra)
-  if(prev!==slot && !state.scores[key]) openScoreModal(key,round,m,true);
+  refreshCard(key,num); renderStepper();
+  if(prev!==slot && !state.scores[num]) openScoreModal(key,num,true);
 }
-
-function refreshCard(key,round,m){
+function refreshCard(key,num){
   const old=document.querySelector(`.match[data-key="${key}"]`);
-  if(old) old.replaceWith(matchCard(round,m,matchDefs(round)[m]));
+  if(old) old.replaceWith(matchCard(num));
 }
 
 /* ---- modal de marcador (puntos extra) ---- */
 function closeModal(){ const m=document.getElementById('modal'); if(m){m.hidden=true; document.getElementById('modal-body').innerHTML='';} }
-function openScoreModal(key,round,m,offer){
-  const def=matchDefs(round)[m];
-  const aI=slotInfo(def[0]), bI=slotInfo(def[1]);
+function openScoreModal(key,num,offer){
+  const def=MATCHES[num];
+  const aI=slotInfo(def.a), bI=slotInfo(def.b);
   if(aI.id==null||bI.id==null) return;
   const A=team(aI.id), B=team(bI.id);
-  const adv=state.adv[key]; if(!adv) return;
+  const adv=state.adv[num]; if(!adv) return;
   const advTeam = adv==='a'?A:B;
-  const sc=state.scores[key]||{};
+  const sc=state.scores[num]||{};
   const body=document.getElementById('modal-body');
   body.innerHTML=`
     <h3 class="modal__h">⚽ ¡Avanza ${advTeam.name}!</h3>
@@ -339,33 +354,20 @@ function openScoreModal(key,round,m,offer){
   document.getElementById('modal').hidden=false;
   const warn=body.querySelector('#ms-warn');
   const skip=body.querySelector('#ms-skip'); if(skip) skip.onclick=closeModal;
-  const clr=body.querySelector('#ms-clear'); if(clr) clr.onclick=()=>{ delete state.scores[key]; save(); refreshCard(key,round,m); renderStepper(); closeModal(); };
+  const clr=body.querySelector('#ms-clear'); if(clr) clr.onclick=()=>{ delete state.scores[num]; save(); refreshCard(key,num); renderStepper(); closeModal(); };
   body.querySelector('#ms-save').onclick=()=>{
     const a=parseInt(body.querySelector('#ms-a').value,10);
     const b=parseInt(body.querySelector('#ms-b').value,10);
     if(isNaN(a)||isNaN(b)){ warn.textContent='Completá ambos marcadores o tocá “Más tarde”.'; warn.hidden=false; return; }
     const advG=adv==='a'?a:b, rivG=adv==='a'?b:a;
     if(rivG>advG){ warn.textContent=`El que no avanza no puede ganar: ${advTeam.name} debe ir igual o arriba (un empate se va a penales).`; warn.hidden=false; return; }
-    state.scores[key]={a:Math.max(0,Math.min(99,a)), b:Math.max(0,Math.min(99,b))};
-    save(); refreshCard(key,round,m); renderStepper(); closeModal();
+    state.scores[num]={a:Math.max(0,Math.min(99,a)), b:Math.max(0,Math.min(99,b))};
+    save(); refreshCard(key,num); renderStepper(); closeModal();
   };
 }
 
-function thirdPlaceCard(){
-  // 3.er puesto: perdedores de las 2 semifinales
-  const def=[{t:'LOSE',round:'sf',m:0},{t:'LOSE',round:'sf',m:1}];
-  // reutiliza matchDefs vía clave especial 'third'
-  matchDefsCache['third']=[def];
-  const wrap=document.createElement('div');
-  wrap.innerHTML='<h3 style="font-family:Montserrat;font-weight:800;text-transform:uppercase;text-align:center;color:var(--ink);margin:34px 0 16px;font-size:18px">Partido por el 3.er puesto</h3>';
-  const grid=document.createElement('div'); grid.className='round';
-  grid.appendChild(matchCard('third',0,def));
-  wrap.appendChild(grid);
-  return wrap;
-}
-
 function championBanner(){
-  const champ=getWinner('final',0);
+  const champ=getWinner(104);
   const b=document.createElement('div'); b.className='champion-banner';
   b.innerHTML=`<div class="cb__k">Tu campeón</div>
     <div class="cb__team">${champ!=null?flagTag(team(champ))+' '+team(champ).name:'🏆 Por definir'}</div>`;
@@ -378,29 +380,14 @@ function stageNav(id){
   const i=order.indexOf(id);
   const nav=document.createElement('div'); nav.className='stage__nav';
   const prev=STAGES[i-1], next=STAGES[i+1];
-  const mk=(s,label,cls)=>{
-    if(!s) return '<span class="spacer"></span>';
-    const locked=s.locked && !state.design;
-    return `<button class="btn ${cls}${locked?'':''}" ${locked?'disabled style="opacity:.5"':''} data-go="${s.id}">${label}</button>`;
-  };
-  nav.innerHTML = (prev?mk(prev,'← '+prev.short,'btn--ghost'):'<span class="spacer"></span>')
+  nav.innerHTML = (prev?`<button class="btn" data-go="${prev.id}">← ${prev.short}</button>`:'<span class="spacer"></span>')
     + '<span class="spacer"></span>'
-    + (next?mk(next,next.short+' →',''):'');
-  nav.querySelectorAll('[data-go]').forEach(b=>{ if(!b.disabled) b.onclick=()=>goto(b.dataset.go); });
-  // ghost necesita fondo oscuro; en página clara lo forzamos a sólido
-  nav.querySelectorAll('.btn--ghost').forEach(b=>{b.classList.remove('btn--ghost');});
+    + (next?`<button class="btn" data-go="${next.id}">${next.short} →</button>`:'');
+  nav.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>goto(b.dataset.go));
   return nav;
 }
 
-/* cache para matchDefs de 'third' */
-const matchDefsCache={};
-const _matchDefs=matchDefs;
-matchDefs=function(round){ return matchDefsCache[round]||_matchDefs(round); };
-
-/* =========================================================
-   eventos globales (scores) + init
-   ========================================================= */
-// cierre del modal (botón × y click fuera de la tarjeta)
+/* ---- eventos globales + init ---- */
 document.getElementById('modal-x').addEventListener('click', closeModal);
 document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==='modal') closeModal(); });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
@@ -412,9 +399,6 @@ document.getElementById('design-mode').addEventListener('change', e=>{
 
 (function init(){
   document.getElementById('design-mode').checked=!!state.design;
-  // si la etapa activa quedó bloqueada y no hay modo diseño, volver a grupos
-  const act=STAGES.find(s=>s.id===state.active);
-  if(act && act.locked && !state.design) state.active='grupos';
   renderStepper();
   renderStage(state.active);
 })();

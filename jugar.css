@@ -96,6 +96,8 @@
 .mteam.win .mname{color:var(--green-2)}
 .mteam.win .advflag{color:#fff;background:var(--green);border-color:var(--green)}
 /* pie de tarjeta */
+.match.locked{opacity:.72}
+.match.locked .match__head{background:#efe9e0;color:var(--tan-dark)}
 .match__foot{display:flex;align-items:center;justify-content:center;padding:9px 14px;border-top:1px dashed var(--line-soft);min-height:42px}
 .foot-hint{font-size:12px;color:var(--text-soft);font-weight:600}
 .scorebtn{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;padding:7px 14px;border-radius:999px;
