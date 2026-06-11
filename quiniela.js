@@ -1,6 +1,6 @@
 /* =========================================================
    QUINIELA STANLEY — motor de pronósticos por etapas
-   Bracket real Mundial 2026 (partidos 73–104) con fechas reales.
+   Cuadro de la fase eliminatoria (llaves) con fechas reales.
    Sin backend aún: el estado se guarda en localStorage.
    ========================================================= */
 
