@@ -38,11 +38,18 @@
     <a class="nav__link nav__link--hide-mobile" href="#como-funciona">Cómo se juega</a>
     <a class="nav__link nav__link--hide-mobile" href="#premios">Premios</a>
     <a class="nav__link" href="jugar.html">Mi quiniela</a>
+    <a class="nav__link nav__link--etapa2" href="etapa2.html">Etapa 2</a>
     <a class="nav__link" href="ranking.html">Ranking</a>
     <a class="nav__link nav__link--hide-mobile" href="https://stanley1913.bo/collections/convocados-stanley" target="_blank" rel="noopener">Tienda</a>
     <a href="#registro" class="btn btn--sm">Participar</a>
   </nav>
 </header>
+
+<!-- ===== BANNER DE FASE (solo en eliminatorias) ===== -->
+<a class="phase-banner" href="etapa2.html">
+  🏆 ¡Empezaron las eliminatorias! Predecí los partidos de hoy
+  <span class="phase-banner__cta">Ir a Etapa 2 →</span>
+</a>
 
 <!-- ===== HERO ===== -->
 <section class="hero pitch">
@@ -51,17 +58,21 @@
     <h1 class="display">PRONOSTICÁ<br><span class="display__accent">CON STANLEY</span></h1>
     <p class="hero__lead">Comprá tu Stanley, armá tus pronósticos de la temporada y demostrá que la tenés clara. Cuantos más aciertos, más alto en el ranking — y más cerca de los premios Stanley.</p>
 
-    <div class="countdown" id="countdown" aria-label="Cuenta regresiva para el cierre de inscripciones">
+    <div class="countdown only-inscripcion" id="countdown" aria-label="Cuenta regresiva para el cierre de inscripciones">
       <div class="cd__item"><span id="cd-d">--</span><small>días</small></div>
       <div class="cd__item"><span id="cd-h">--</span><small>hs</small></div>
       <div class="cd__item"><span id="cd-m">--</span><small>min</small></div>
       <div class="cd__item"><span id="cd-s">--</span><small>seg</small></div>
     </div>
-    <p class="countdown__label">Cierre de inscripciones</p>
+    <p class="countdown__label only-inscripcion">Cierre de inscripciones</p>
 
-    <div class="hero__cta">
+    <div class="hero__cta only-inscripcion">
       <a href="#registro" class="btn btn--lg">Quiero participar</a>
       <a href="https://stanley1913.bo/collections/convocados-stanley" class="btn btn--lg btn--ghost" target="_blank" rel="noopener">Ver la colección Convocados</a>
+    </div>
+    <div class="hero__cta only-eliminatorias">
+      <a href="etapa2.html" class="btn btn--lg">Predecí los partidos de hoy →</a>
+      <a href="ranking.html" class="btn btn--lg btn--ghost">Ver el ranking</a>
     </div>
     <p class="hero__legal">Promoción oficial de Stanley Bolivia (Openbrands S.R.L.). No está asociada, patrocinada ni avalada por ningún torneo, selección, organización o competición oficial.</p>
   </div>
@@ -192,6 +203,7 @@
 </footer>
 
 <script src="config.js"></script>
+<script src="phase.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

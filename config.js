@@ -5,5 +5,9 @@
 window.STANLEY = {
   APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwQ6NHmn9lx91oWtiNo2--fUmhM7RLBgIUoPfZBhVj_uTZfuURiOjFWXr1_CZ2IxrzP/exec",
   WHATSAPP_INVITE_URL: "https://chat.whatsapp.com/",
-  DEADLINE: "2026-06-11T12:00:00-04:00"   // cierre de inscripciones (hora Bolivia)
+  DEADLINE: "2026-06-11T12:00:00-04:00",  // cierre de inscripciones (hora Bolivia)
+  // Fase de la campaña: controla el home y el nav.
+  //   inscripcion | grupos | eliminatorias | cerrado
+  // (se puede previsualizar con ?phase=eliminatorias en la URL)
+  PHASE: "inscripcion"
 };

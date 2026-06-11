@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Etapa 2 · Pronosticá con Stanley</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="jugar.css" />
+<style>
+  /* ===== sólo para la vista de Etapa 2 ===== */
+  .preview-flag{background:#b59677;color:#fff;text-align:center;font-family:'Montserrat',sans-serif;
+    font-weight:800;font-size:12px;letter-spacing:.5px;padding:7px;text-transform:uppercase}
+  /* tabs por día */
+  .daytabs{display:flex;gap:8px;overflow-x:auto;padding:16px 24px;background:var(--mist);
+    border-bottom:1px solid var(--line-soft);scrollbar-width:thin}
+  .daytab{flex:0 0 auto;background:#fff;border:1.5px solid var(--line-soft);border-radius:10px;
+    padding:9px 16px;cursor:pointer;font-family:'Montserrat',sans-serif;font-weight:700;font-size:12.5px;color:var(--text);
+    display:flex;flex-direction:column;align-items:center;gap:2px;min-width:96px}
+  .daytab small{font-weight:600;color:var(--text-soft);font-size:11px}
+  .daytab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .daytab.active small{color:var(--tan)}
+  .daywrap{max-width:1180px;margin:0 auto;padding:30px 24px 80px}
+  .day-empty{display:none}
+  .day-head{text-align:center;margin-bottom:24px}
+  .day-head h2{font-family:'Montserrat',sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(22px,3.4vw,34px);color:var(--ink)}
+  .day-head p{color:var(--text-soft);font-size:14px;margin-top:4px}
+  /* campos extra del partido */
+  .e2-card .mteam{cursor:default}
+  .e2-score{display:flex;align-items:center;gap:10px;padding:12px 14px;border-top:1px solid var(--mist)}
+  .e2-score .mname{flex:1;display:flex;align-items:center;font-weight:700;color:var(--ink);font-size:14px}
+  .e2-fields{border-top:1px dashed var(--line-soft);padding:14px;display:flex;flex-direction:column;gap:13px;background:#fcfbf9}
+  .e2-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .e2-row label{font-size:13px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:7px}
+  .e2-toggle{display:flex;gap:6px}
+  .e2-tg{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;padding:7px 12px;border-radius:999px;
+    border:1.5px solid var(--line-soft);background:#fff;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px}
+  .e2-tg.sel{background:var(--green);border-color:var(--green);color:#fff}
+  .e2-num{width:62px;height:40px;text-align:center;font-family:'Montserrat',sans-serif;font-weight:800;font-size:18px;
+    border:1.5px solid #ddd;border-radius:8px;color:var(--ink);outline:none}
+  .e2-num:focus,.e2-sel:focus{border-color:var(--tan)}
+  .e2-sel{min-width:170px;max-width:60%;height:40px;border:1.5px solid #ddd;border-radius:8px;padding:0 10px;
+    font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--ink);background:#fff;outline:none}
+  .e2-foot{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:10px 14px;border-top:1px solid var(--mist)}
+  .e2-pts{font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:var(--text-soft);
+    background:var(--mist);border-radius:999px;padding:4px 10px}
+  .e2-saved{text-align:center;font-size:12px;color:var(--green-2);font-weight:700;padding:6px}
+  .e2-90{padding:8px 14px;background:var(--mist);font-family:'Montserrat',sans-serif;font-weight:800;
+    font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-soft)}
+  .e2-tie{display:none;flex-direction:column;gap:9px;background:#fdf7ef;border:1px solid #ecd9c2;border-radius:10px;padding:11px}
+  .e2-tie.show{display:flex}
+  .e2-tie-q{font-size:12.5px;color:var(--tan-dark);font-weight:700;line-height:1.35}
+  .e2-tie-opts{display:flex;gap:8px}
+</style>
+</head>
+<body>
+<div class="flagbar" aria-hidden="true"></div>
+<div class="preview-flag">🔧 Etapa 2 en preparación — partidos de EJEMPLO. Pronto, con los equipos reales.</div>
+
+<header class="nav">
+  <img class="nav__logo" src="assets/logo-stanley-horizontal.png" alt="Stanley 1913" />
+  <nav class="nav__links">
+    <a class="nav__link" href="index.html">Inicio</a>
+    <a class="nav__link" href="jugar.html">Mi quiniela</a>
+    <a class="nav__link" href="ranking.html">Ranking</a>
+    <a class="nav__link nav__link--hide-mobile" href="https://stanley1913.bo/collections/convocados-stanley" target="_blank" rel="noopener">Tienda</a>
+  </nav>
+</header>
+
+<div class="gamebar">
+  <div class="gamebar__title">Etapa 2 · Predicciones en vivo<small>Adiviná cada partido real, día por día</small></div>
+  <div class="gamebar__right">
+    <span class="cloud" data-s="ok">✅ Guardado</span>
+    <span class="nextmatch">⏱ Próximo: <b>14:55:30</b></span>
+  </div>
+</div>
+
+<div class="progress-global" title="Avance de tus predicciones del día">
+  <div class="pg-fill" style="width:40%"></div>
+  <span class="pg-label">2/5 hoy</span>
+</div>
+
+<div class="daytabs" id="daytabs"></div>
+<main id="days"></main>
+
+<!-- leyenda -->
+<section class="section section--cream">
+  <h2 class="h2">¿Cómo se puntúa en Etapa 2?</h2>
+  <p class="section__lead">Cada partido suma por separado y se acumula a tu puntaje general, día tras día.</p>
+  <div class="score-cards" style="max-width:900px;margin:0 auto">
+    <div class="score-card"><span class="score-card__pts">+4→20</span><p>Acertar <strong>quién avanza</strong> (según la ronda).</p></div>
+    <div class="score-card"><span class="score-card__pts">+3→8</span><p>Acertar el <strong>marcador exacto</strong>.</p></div>
+    <div class="score-card"><span class="score-card__pts">+3</span><p>Acertar el <strong>total de amarillas</strong> (±1 → +1).</p></div>
+    <div class="score-card"><span class="score-card__pts">+5</span><p>Acertar el <strong>jugador del partido</strong>.</p></div>
+  </div>
+</section>
+
+<footer class="footer pitch pitch--dark">
+  <img class="footer__logo" src="assets/logo-stanley-vertical.png" alt="Stanley" />
+  <div class="footer__legal"><p class="footer__copy">© 2026 Openbrands S.R.L. · Stanley 1913 Bolivia · Vista previa</p></div>
+</footer>
+
+<script src="config.js"></script>
+<script src="phase.js"></script>
+<script>
+const FIXTURES = [
+  { id:'d1', dow:'Sáb', date:'28 jun', titulo:'Sábado 28 de junio', sub:'Dieciseisavos · 2 partidos', matches:[
+    { n:73, ronda:'16avos', hora:'15:00', a:{name:'México',iso:'mx'}, b:{name:'Canadá',iso:'ca'},
+      motm:['Santiago Giménez','Hirving Lozano','Alphonso Davies','Jonathan David'] },
+    { n:74, ronda:'16avos', hora:'18:30', a:{name:'Brasil',iso:'br'}, b:{name:'Marruecos',iso:'ma'},
+      motm:['Vinícius Jr.','Rodrygo','Achraf Hakimi','Brahim Díaz'] },
+  ]},
+  { id:'d2', dow:'Dom', date:'29 jun', titulo:'Domingo 29 de junio', sub:'Dieciseisavos · 2 partidos', matches:[
+    { n:75, ronda:'16avos', hora:'13:00', a:{name:'Argentina',iso:'ar'}, b:{name:'Croacia',iso:'hr'},
+      motm:['Lionel Messi','Julián Álvarez','Luka Modrić','Joško Gvardiol'] },
+    { n:76, ronda:'16avos', hora:'17:00', a:{name:'España',iso:'es'}, b:{name:'Uruguay',iso:'uy'},
+      motm:['Lamine Yamal','Pedri','Federico Valverde','Darwin Núñez'] },
+  ]},
+  { id:'d3', dow:'Lun', date:'30 jun', titulo:'Lunes 30 de junio', sub:'Dieciseisavos · 2 partidos', matches:[
+    { n:77, ronda:'16avos', hora:'15:00', a:{name:'Francia',iso:'fr'}, b:{name:'Senegal',iso:'sn'},
+      motm:['Kylian Mbappé','Ousmane Dembélé','Sadio Mané','Nicolas Jackson'] },
+    { n:78, ronda:'16avos', hora:'20:00', a:{name:'Inglaterra',iso:'gb-eng'}, b:{name:'Países Bajos',iso:'nl'},
+      motm:['Jude Bellingham','Harry Kane','Virgil van Dijk','Cody Gakpo'] },
+  ]},
+];
+const flag = iso => `<img class="flagimg" src="https://flagcdn.com/h40/${iso}.png" alt="">`;
+
+const tabsEl = document.getElementById('daytabs');
+const daysEl = document.getElementById('days');
+
+FIXTURES.forEach((d,i)=>{
+  const t=document.createElement('button');
+  t.className='daytab'+(i===0?' active':'');
+  t.innerHTML=`${d.dow} <small>${d.date}</small>`;
+  t.onclick=()=>show(d.id);
+  t.dataset.id=d.id;
+  tabsEl.appendChild(t);
+
+  const sec=document.createElement('section');
+  sec.className='daywrap'+(i===0?'':' day-empty');
+  sec.dataset.id=d.id;
+  sec.innerHTML=`<div class="day-head"><h2>${d.titulo}</h2><p>${d.sub} · se cierran a la hora de inicio</p></div>`;
+  const grid=document.createElement('div'); grid.className='round';
+  d.matches.forEach(m=> grid.appendChild(card(m)));
+  sec.appendChild(grid);
+  daysEl.appendChild(sec);
+});
+
+function card(m){
+  const el=document.createElement('div');
+  el.className='match e2-card';
+  const opts = ['<option value="">— elegí —</option>']
+    .concat(m.motm.map(p=>`<option>${p}</option>`), '<option>Otro</option>').join('');
+  el.innerHTML=`
+    <div class="match__head"><span>${m.ronda} · Partido ${m.n}</span><span class="mdate">${m.hora}</span></div>
+    <div class="e2-90">Resultado a los 90'</div>
+    <div class="e2-score"><span class="mname">${flag(m.a.iso)} ${m.a.name}</span><input class="e2-num e2-sc" data-side="a" type="number" min="0" max="20" placeholder="–"></div>
+    <div class="e2-score"><span class="mname">${flag(m.b.iso)} ${m.b.name}</span><input class="e2-num e2-sc" data-side="b" type="number" min="0" max="20" placeholder="–"></div>
+    <div class="e2-fields">
+      <div class="e2-row">
+        <label>🏆 ¿Quién avanza?</label>
+        <div class="e2-toggle">
+          <button class="e2-tg" data-adv="a">${flag(m.a.iso)} ${m.a.name}</button>
+          <button class="e2-tg" data-adv="b">${flag(m.b.iso)} ${m.b.name}</button>
+        </div>
+      </div>
+      <div class="e2-tie">
+        <span class="e2-tie-q">⚖️ Empate a los 90' — ¿cómo avanza el que elegiste?</span>
+        <div class="e2-tie-opts">
+          <button class="e2-tg" data-tb="alargue">⏱ Alargue</button>
+          <button class="e2-tg" data-tb="penales">🥅 Penales</button>
+        </div>
+      </div>
+      <div class="e2-row">
+        <label>🟨 Amarillas totales</label>
+        <input class="e2-num" type="number" min="0" max="20" placeholder="–">
+      </div>
+      <div class="e2-row">
+        <label>⭐ Jugador del partido</label>
+        <select class="e2-sel">${opts}</select>
+      </div>
+    </div>
+    <div class="e2-foot">
+      <span class="e2-pts">avanza +4</span>
+      <span class="e2-pts">marcador +3</span>
+      <span class="e2-pts">definición +1</span>
+      <span class="e2-pts">amarillas +3</span>
+      <span class="e2-pts">jugador +5</span>
+    </div>`;
+  el.querySelectorAll('.e2-tg[data-adv]').forEach(b=> b.onclick=()=>{
+    el.querySelectorAll('.e2-tg[data-adv]').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+  });
+  el.querySelectorAll('.e2-tg[data-tb]').forEach(b=> b.onclick=()=>{
+    el.querySelectorAll('.e2-tg[data-tb]').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+  });
+  // la definición (alargue/penales) sólo aparece si hay empate a los 90'
+  const tie=el.querySelector('.e2-tie'), scs=el.querySelectorAll('.e2-sc');
+  const checkTie=()=>{ const a=parseInt(scs[0].value,10), b=parseInt(scs[1].value,10);
+    tie.classList.toggle('show', !isNaN(a)&&!isNaN(b)&&a===b); };
+  scs.forEach(s=> s.addEventListener('input', checkTie));
+  return el;
+}
+
+function show(id){
+  document.querySelectorAll('.daytab').forEach(t=> t.classList.toggle('active', t.dataset.id===id));
+  document.querySelectorAll('.daywrap').forEach(s=> s.classList.toggle('day-empty', s.dataset.id!==id));
+}
+
+/* demo: dejar 2 partidos pre-cargados (uno con empate→definición) para ver los estados */
+window.addEventListener('load',()=>{
+  const cards=document.querySelectorAll('.e2-card');
+  const c1=cards[0];
+  if(c1){  // 2-1, sin empate
+    const s=c1.querySelectorAll('.e2-sc'); s[0].value=2; s[1].value=1;
+    c1.querySelector('.e2-tg[data-adv="a"]').classList.add('sel');
+    c1.querySelector('.e2-num:not(.e2-sc)').value=4;
+    c1.querySelector('.e2-sel').selectedIndex=1;
+  }
+  const c2=cards[1];
+  if(c2){  // 1-1 empate → avanza por penales
+    const s=c2.querySelectorAll('.e2-sc'); s[0].value=1; s[1].value=1;
+    s[0].dispatchEvent(new Event('input'));   // muestra el bloque de definición
+    c2.querySelector('.e2-tg[data-adv="a"]').classList.add('sel');
+    c2.querySelector('.e2-tg[data-tb="penales"]').classList.add('sel');
+    c2.querySelector('.e2-num:not(.e2-sc)').value=5;
+    c2.querySelector('.e2-sel').selectedIndex=2;
+  }
+});
+</script>
+</body>
+</html>
