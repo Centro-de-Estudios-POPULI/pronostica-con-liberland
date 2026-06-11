@@ -41,6 +41,7 @@ const form = document.getElementById("form");
 const errorEl = document.getElementById("form-error");
 const submitBtn = document.getElementById("submit");
 function showError(msg) { errorEl.textContent = msg; errorEl.hidden = false; errorEl.scrollIntoView({ behavior: "smooth", block: "center" }); }
+function resetBtn() { submitBtn.disabled = false; submitBtn.textContent = "Inscribirme y armar mi quiniela"; }
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -59,6 +60,7 @@ form.addEventListener("submit", async (e) => {
     documento: form.documento.value.trim(),
     email: form.email.value.trim()
   };
+  const comprobanteNro = form.comprobante_nro.value.trim();
   const payload = {
     action: "register",
     id: player.id,
@@ -68,17 +70,28 @@ form.addEventListener("submit", async (e) => {
     whatsapp: form.whatsapp.value.trim(),
     email: form.email.value.trim(),
     ciudad: form.ciudad.value.trim(),
+    comprobante_nro: comprobanteNro,
     enviado: new Date().toISOString(),
     comprobante: fileData
   };
 
-  submitBtn.disabled = true; submitBtn.textContent = "Enviando…";
+  submitBtn.disabled = true; submitBtn.textContent = "Verificando…";
   try {
     if (!CONFIG.APPS_SCRIPT_URL) {
       // modo demo (sin backend conectado): simula éxito, guarda jugador local
       await new Promise(r => setTimeout(r, 500));
       console.warn("APPS_SCRIPT_URL vacío: registro NO enviado a la nube (modo demo).", payload);
     } else {
+      // Chequeo previo de duplicado (GET es legible cross-origin, como el ranking).
+      // El servidor igual deduplica al guardar; esto es solo para avisar al usuario.
+      try {
+        const q = new URLSearchParams({ action: "existe", ci: player.documento, comp: comprobanteNro });
+        const chk = await fetch(CONFIG.APPS_SCRIPT_URL + "?" + q.toString()).then(r => r.json());
+        if (chk && chk.ci)   { resetBtn(); return showError("Ese documento (CI) ya está inscrito. Si ya participaste, entrá a tu quiniela desde el menú."); }
+        if (chk && chk.comp) { resetBtn(); return showError("Ese número de comprobante ya fue registrado. Cada compra puede inscribirse una sola vez."); }
+      } catch (e) { console.warn("Chequeo de duplicado no disponible; continúo (el servidor deduplica igual).", e); }
+
+      submitBtn.textContent = "Enviando…";
       // text/plain → request "simple" (sin preflight CORS a Apps Script).
       // El id lo generamos en el cliente, así que no dependemos de leer la respuesta.
       await fetch(CONFIG.APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
@@ -86,7 +99,7 @@ form.addEventListener("submit", async (e) => {
     localStorage.setItem("stanley_player", JSON.stringify(player));   // vincula la quiniela
     showConfirm();
   } catch (err) {
-    submitBtn.disabled = false; submitBtn.textContent = "Inscribirme y armar mi quiniela";
+    resetBtn();
     showError("No pudimos registrar tu inscripción. Revisá tu conexión e intentá de nuevo.");
     console.error(err);
   }

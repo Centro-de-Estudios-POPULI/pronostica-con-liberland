@@ -64,22 +64,52 @@ function doPost(e){
   }catch(err){ return json({ok:false, error:String(err)}); }
 }
 function doGet(e){
-  if(e && e.parameter && e.parameter.action==="ranking") return json(rankingJson_());
+  const p = (e && e.parameter) || {};
+  if(p.action==="ranking") return json(rankingJson_());
+  if(p.action==="existe"){
+    const dup = findDuplicates_(p.ci||"", p.comp||"", p.id||"");
+    return json({ok:true, ci:dup.ci, comp:dup.comp});
+  }
   return json({ok:true, msg:"Quiniela Stanley API activa."});
 }
 
 /* ============ REGISTRO ============ */
 function register_(d){
   const sh = sheet_("Participantes",
-    ["id","nombre","apellido","documento","whatsapp","email","ciudad","comprobante","fecha"]);
+    ["id","nombre","apellido","documento","whatsapp","email","ciudad","comprobante","fecha","comprobante_nro"]);
+  // anti-duplicado: 1 CI y 1 nº de comprobante por persona (ignora la propia fila si reenvía con el mismo id)
+  const dup = findDuplicates_(d.documento, d.comprobante_nro, d.id);
+  if(dup.ci)   return {ok:false, code:"dup_ci",   error:"Ese documento (CI) ya está inscrito."};
+  if(dup.comp) return {ok:false, code:"dup_comp", error:"Ese número de comprobante ya fue registrado."};
   let fileUrl = "";
   if(d.comprobante && d.comprobante.b64) fileUrl = saveFile_(d.comprobante, d.documento||d.id);
   upsert_(sh, 0, d.id, [
     d.id||"", d.nombre||"", d.apellido||"", d.documento||"",
-    "'"+(d.whatsapp||""), d.email||"", d.ciudad||"", fileUrl, new Date()
+    "'"+(d.whatsapp||""), d.email||"", d.ciudad||"", fileUrl, new Date(),
+    "'"+(d.comprobante_nro||"")
   ]);
   return {ok:true, id:d.id};
 }
+
+/* Busca duplicados en Participantes. Devuelve {ci, comp}. excludeId = no contar la fila propia. */
+function findDuplicates_(documento, compNro, excludeId){
+  const out = {ci:false, comp:false};
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  const sh = ss.getSheetByName("Participantes");
+  if(!sh || sh.getLastRow()<2) return out;
+  const doc  = normKey_(documento);
+  const comp = normKey_(compNro);
+  const data = sh.getDataRange().getValues();   // [id,nombre,apellido,documento,...,fecha,comprobante_nro]
+  for(let i=1;i<data.length;i++){
+    const r = data[i];
+    if(excludeId && String(r[0])===String(excludeId)) continue;
+    if(doc  && normKey_(r[3])===doc)  out.ci   = true;
+    if(comp && normKey_(r[9])===comp) out.comp = true;
+    if(out.ci && (out.comp || !comp)) break;
+  }
+  return out;
+}
+function normKey_(v){ return String(v==null?"":v).toLowerCase().replace(/\s+/g,"").trim(); }
 
 /* ============ PRONÓSTICOS ============ */
 function savePicks_(d){

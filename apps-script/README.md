@@ -18,7 +18,7 @@ Apps Script, que escribe en una Hoja de Cálculo. Los comprobantes van a una car
 > Si después editás `Code.gs`: *Implementar → Administrar implementaciones → (editar) → Nueva versión*.
 
 ## Qué se guarda
-- Pestaña **Participantes**: `id, nombre, apellido, documento, whatsapp, email, ciudad, comprobante, fecha`.
+- Pestaña **Participantes**: `id, nombre, apellido, documento, whatsapp, email, ciudad, comprobante, fecha, comprobante_nro`.
 - Pestaña **Pronosticos**: `id, nombre, documento, actualizado, avance%, campeon, finalista, tercer_puesto, grupos_json, partidos_json` (1 fila por jugador; se actualiza con cada cambio).
 
 El **id** lo genera la página al inscribirse y queda en el navegador del jugador, así sus
@@ -31,5 +31,10 @@ el detalle completo; si querés expandirlas a columnas, lo hacemos con un script
 ## Notas
 - Mientras `APPS_SCRIPT_URL` esté vacío en `config.js`, el sitio anda en **modo demo**
   (valida y guarda local, no envía a la nube).
-- Dedup: hoy la clave es el `id` del jugador. Para evitar CI duplicados entre dispositivos,
-  se puede limpiar en la Hoja o agregar control luego.
+- Dedup: el servidor rechaza inscripciones con un **CI** o un **nº de comprobante** ya usados
+  (`register_` consulta `findDuplicates_` antes de escribir). La página, además, chequea por
+  `GET ?action=existe&ci=…&comp=…` antes de enviar para avisar al usuario al instante. Si reenviás
+  con el mismo `id` (mismo navegador), se actualiza tu propia fila en vez de bloquear.
+- **Nota:** el `comprobante_nro` se guarda como columna nueva. En una Hoja creada antes de este
+  cambio, la cabecera de esa columna puede quedar vacía pero los datos igual se escriben en la
+  columna J; opcional poner el título `comprobante_nro` en J1 a mano.
