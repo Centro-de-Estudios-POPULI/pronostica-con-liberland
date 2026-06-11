@@ -199,6 +199,9 @@
   text-transform:uppercase;letter-spacing:.5px;color:var(--green-deep);background:#fff;border:0;border-radius:999px;
   padding:11px 22px;cursor:pointer;transition:transform .15s,background .15s}
 .champion-banner .cb__share:hover{transform:translateY(-2px);background:var(--tan);color:#fff}
+.champion-banner .cb__home{display:inline-block;margin-top:14px;color:rgba(255,255,255,.82);
+  font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.6px;text-decoration:underline}
+.champion-banner .cb__home:hover{color:#fff}
 
 /* navegación inferior del wizard */
 .stage__nav{display:flex;justify-content:space-between;gap:12px;margin-top:34px}

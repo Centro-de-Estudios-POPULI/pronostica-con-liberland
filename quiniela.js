@@ -873,7 +873,7 @@ function chooseAdv(key,slot,num){
   if(cb) cb.replaceWith(championBanner());
   const st = MATCHES[num].e==='tercer'?'final':MATCHES[num].e;
   notifyIfComplete(st);
-  if(num===104) confetti();                 // ¡elegiste campeón!
+  if(num===104){ confetti(); if(state.active!=='nostra') setTimeout(openFinishModal, 650); }  // ¡elegiste campeón!
   // auto-scroll a la próxima llave sin elegir (misma ronda)
   const list=STAGE_MATCHES[st], idx=list.indexOf(num);
   const nx=list.slice(idx+1).find(n=>!state.adv[n]
@@ -960,8 +960,28 @@ function championBanner(){
     const sh=document.createElement('button'); sh.className='cb__share';
     sh.innerHTML='📲 Compartir mi campeón'; sh.onclick=shareImage;
     b.appendChild(sh);
+    const home=document.createElement('a'); home.className='cb__home'; home.href='index.html';
+    home.textContent='🏠 Volver al inicio'; b.appendChild(home);
   }
   return b;
+}
+
+/* modal de cierre: aparece al completar el pronóstico (elegir campeón / sellar Nostradamus) */
+function openFinishModal(){
+  const champ=getWinner(104);
+  const champHtml = champ!=null ? `${flagTag(team(champ))} ${team(champ).name}` : 'tu campeón';
+  const body=document.getElementById('modal-body');
+  body.innerHTML=`
+    <h3 class="modal__h">🏆 ¡Pronóstico completo!</h3>
+    <p class="modal__p">Tu campeón es <b>${champHtml}</b>. Compartilo en tu historia de Instagram y mucha suerte.</p>
+    <div class="modal__actions modal__actions--stack">
+      <button class="btn btn--sm" id="fin-champ">📲 Compartir mi campeón</button>
+      <button class="btn btn--sm" id="fin-res">📋 Compartir mi resumen</button>
+      <a class="btn btn--sm" href="index.html" style="background:#9aa2a6">🏠 Volver al inicio</a>
+    </div>`;
+  const m=document.getElementById('modal'); m.classList.remove('wide'); m.hidden=false;
+  body.querySelector('#fin-champ').onclick=()=>{ closeModal(); shareImage(); };
+  body.querySelector('#fin-res').onclick=()=>{ closeModal(); shareResumen(); };
 }
 
 /* navegación inferior */
@@ -1182,6 +1202,7 @@ function confirmNostra(){
       save(); cloudSave();
       renderStepper(); renderNostra(); confetti();
       toast('🔮 ¡Nostradamus sellado! Mucha suerte','ok');
+      setTimeout(openFinishModal, 800);
     }
   });
 }
