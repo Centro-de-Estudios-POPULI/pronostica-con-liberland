@@ -970,6 +970,7 @@ function groupsSubmitBar(){
     const done=document.createElement('div'); done.className='submit-bar__done';
     done.innerHTML='🔒 <b>Fase de grupos enviada.</b> Tus clasificados quedaron registrados para la Etapa 1.';
     wrap.appendChild(done);
+    wrap.appendChild(communityEl());
     if(!state.nostradamus.sent){
       const b=document.createElement('button'); b.className='btn btn--lg'; b.textContent='🔮 Jugar Nostradamus';
       b.onclick=openNostradamusModal; wrap.appendChild(b);
@@ -1003,9 +1004,49 @@ function submitGroups(){
     onOk:()=>{
       state.groupsSubmitted=true; save(); cloudSave();
       renderStepper(); renderStage('grupos'); confetti();
-      setTimeout(openNostradamusModal, 700);
+      setTimeout(openGroupsDoneModal, 700);
     }
   });
+}
+
+/* ---- comunidad WhatsApp (link real va en config.js → WHATSAPP_INVITE_URL) ---- */
+const waInviteURL = () => (window.STANLEY||{}).WHATSAPP_INVITE_URL || '';
+const hasCommunity = () => /chat\.whatsapp\.com\/.+/.test(waInviteURL());
+function communityEl(){
+  if(hasCommunity()){
+    const a=document.createElement('a'); a.className='btn'; a.style.background='var(--green)';
+    a.href=waInviteURL(); a.target='_blank'; a.rel='noopener'; a.textContent='💬 Unirme a la comunidad';
+    return a;
+  }
+  const note=document.createElement('p'); note.className='submit-bar__hint';
+  note.textContent='💬 La comunidad de WhatsApp se habilita muy pronto — ahí van rankings y avisos de cada etapa.';
+  return note;
+}
+
+/* ---- al cerrar la fase de grupos: comunidad + Nostradamus ---- */
+function openGroupsDoneModal(){
+  const body=document.getElementById('modal-body');
+  const url=waInviteURL(), wa=hasCommunity();
+  const waBtn = wa
+    ? `<a class="btn btn--sm" id="gd-wa" href="${url}" target="_blank" rel="noopener" style="background:var(--green)">💬 Unirme a la comunidad</a>`
+    : '';
+  const waNote = wa ? '' : `<p class="modal__note">💬 La comunidad de WhatsApp se habilita muy pronto: ahí te llegan los rankings y los avisos de cada etapa.</p>`;
+  body.innerHTML=`
+    <h3 class="modal__h">✅ ¡Participación registrada!</h3>
+    <p class="modal__p">Cerraste tu <b>fase de grupos</b>: ya estás dentro de la Etapa 1. Te quedan dos cosas:</p>
+    <ul class="nostra-list">
+      <li>💬 <b>Comunidad WhatsApp</b> — rankings, recordatorios y avisos de cada etapa.</li>
+      <li>🔮 <b>Nostradamus</b> — predecí TODO el cuadro de una vez y competí por un kit Stanley.</li>
+    </ul>
+    ${waNote}
+    <div class="modal__actions modal__actions--stack">
+      ${waBtn}
+      <button class="btn btn--sm" id="gd-nostra">🔮 Jugar Nostradamus</button>
+      <button class="btn btn--sm" id="gd-later" style="background:#9aa2a6">Ahora no</button>
+    </div>`;
+  document.getElementById('modal').hidden=false;
+  body.querySelector('#gd-later').onclick=closeModal;
+  body.querySelector('#gd-nostra').onclick=()=>{ closeModal(); goto('nostra'); };
 }
 
 /* ---- popup Nostradamus ---- */

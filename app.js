@@ -97,7 +97,7 @@ form.addEventListener("submit", async (e) => {
       await fetch(CONFIG.APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
     }
     localStorage.setItem("stanley_player", JSON.stringify(player));   // vincula la quiniela
-    showConfirm();
+    goToQuiniela();
   } catch (err) {
     resetBtn();
     showError("No pudimos registrar tu inscripción. Revisá tu conexión e intentá de nuevo.");
@@ -105,10 +105,9 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-function showConfirm() {
-  form.closest(".form-card").hidden = true;
-  const c = document.getElementById("confirm");
-  c.hidden = false;
-  document.getElementById("wa-cta").href = CONFIG.WHATSAPP_INVITE_URL;
-  c.scrollIntoView({ behavior: "smooth", block: "center" });
+function goToQuiniela() {
+  // tras inscribirse, directo a armar la quiniela.
+  // La invitación a la comunidad se ofrece al CERRAR la fase de grupos (en jugar.html).
+  submitBtn.textContent = "¡Listo! Abriendo tu quiniela…";
+  window.location.href = "jugar.html";
 }
