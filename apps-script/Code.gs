@@ -8,11 +8,14 @@
  *   Resultados_partidos REAL: por partido, quién avanzó + goles (admin)
  *   Ranking            calculado por computeRanking()
  *
- * MENÚ (al abrir la Hoja, como dueño): "🏆 Quiniela"
- *   - Preparar pestañas de Resultados  → crea/pre-llena Resultados_*
- *   - Recalcular ranking               → recalcula la pestaña Ranking
+ * MENU (al abrir la Hoja, como dueño): "Quiniela"
+ *   - Preparar pestañas de Resultados  -> crea/pre-llena Resultados_*
+ *   - Recalcular ranking               -> recalcula la pestaña Ranking
  *
- * Endpoint público: GET ?action=ranking  → JSON del leaderboard (para la web).
+ * Endpoint público: GET ?action=ranking  -> JSON del leaderboard (para la web).
+ *
+ * NOTA: SHEET_ID y FOLDER_ID van como placeholders en el repo (público).
+ * Los valores reales se pegan SOLO en el proyecto de script.google.com.
  */
 
 const SHEET_ID  = "PEGAR_ID_DE_LA_HOJA";
@@ -20,8 +23,8 @@ const FOLDER_ID = "PEGAR_ID_DE_LA_CARPETA";
 
 /* ====== PUNTOS (editables) ====== */
 const PUNTOS = {
-  clasificado: 3,      // por cada selección que clasificó a dieciseisavos
-  puesto_exacto: 1,    // bonus si además acertó el puesto (1.º o 2.º)
+  clasificado: 3,      // por cada seleccion que clasifico a dieciseisavos
+  puesto_exacto: 1,    // bonus si ademas acerto el puesto (1ro o 2do)
   avanza:   { r32:4,  r16:6,  qf:8,  sf:12, tercer:8, final:20 },
   marcador: { r32:3,  r16:4,  qf:5,  sf:6,  tercer:5, final:8  }
 };
@@ -77,10 +80,10 @@ function doGet(e){
 function register_(d){
   const sh = sheet_("Participantes",
     ["id","nombre","apellido","documento","whatsapp","email","ciudad","comprobante","fecha","comprobante_nro"]);
-  // anti-duplicado: 1 CI y 1 nº de comprobante por persona (ignora la propia fila si reenvía con el mismo id)
+  // anti-duplicado: 1 CI y 1 numero de comprobante por persona (ignora la propia fila si reenvia con el mismo id)
   const dup = findDuplicates_(d.documento, d.comprobante_nro, d.id);
-  if(dup.ci)   return {ok:false, code:"dup_ci",   error:"Ese documento (CI) ya está inscrito."};
-  if(dup.comp) return {ok:false, code:"dup_comp", error:"Ese número de comprobante ya fue registrado."};
+  if(dup.ci)   return {ok:false, code:"dup_ci",   error:"Ese documento (CI) ya esta inscrito."};
+  if(dup.comp) return {ok:false, code:"dup_comp", error:"Ese numero de comprobante ya fue registrado."};
   let fileUrl = "";
   if(d.comprobante && d.comprobante.b64) fileUrl = saveFile_(d.comprobante, d.documento||d.id);
   upsert_(sh, 0, d.id, [
@@ -111,14 +114,19 @@ function findDuplicates_(documento, compNro, excludeId){
 }
 function normKey_(v){ return String(v==null?"":v).toLowerCase().replace(/\s+/g,"").trim(); }
 
-/* ============ PRONÓSTICOS ============ */
+/* ============ PRONOSTICOS ============ */
+/* OJO: pronostico_json queda en el indice 8 (lo lee computeRanking en r[8]).
+   Los campos nuevos (grupos_enviados / nostradamus / nostra_at) van AL FINAL
+   (indices 9,10,11) para no correr columnas ni romper el ranking. */
 function savePicks_(d){
   const sh = sheet_("Pronosticos",
-    ["id","nombre","documento","actualizado","avance%","campeon","finalista","tercer_puesto","pronostico_json"]);
+    ["id","nombre","documento","actualizado","avance%","campeon","finalista","tercer_puesto","pronostico_json",
+     "grupos_enviados","nostradamus","nostra_at"]);
   upsert_(sh, 0, d.id, [
     d.id||"", d.nombre||"", d.documento||"", new Date(), d.avance||0,
     d.campeon||"", d.finalista||"", d.tercero||"",
-    JSON.stringify(d.pronostico||{})
+    JSON.stringify(d.pronostico||{}),
+    d.grupos_enviados?1:0, d.nostradamus?1:0, "'"+(d.nostra_at||"")
   ]);
   return {ok:true};
 }
@@ -135,7 +143,7 @@ function setupResultados(){
   if(p.getLastRow()<=1){
     for(let n=73;n<=104;n++) p.appendRow([n, matchEtapa_(n), "", "", ""]);
   }
-  SpreadsheetApp.getActive().toast("Pestañas de Resultados listas. Cargá los datos reales y luego 'Recalcular ranking'.");
+  SpreadsheetApp.getActive().toast("Pestanas de Resultados listas. Carga los datos reales y luego Recalcular ranking.");
 }
 
 /* ============ RANKING ============ */
@@ -201,7 +209,7 @@ function scorePlayer_(pron, realQual, realRound){
     const et = matchEtapa_(num);
     const pk = llaves[num];            // {av, gf, gc}
     const real = (realRound[et]||{})[String(pk.av).trim()];
-    if(!real) return;                  // ese equipo NO avanzó realmente en esa ronda
+    if(!real) return;                  // ese equipo NO avanzo realmente en esa ronda
     puntos += (PUNTOS.avanza[et]||0);
     if(pk.gf!=="" && pk.gc!=="" && Number(pk.gf)===real.gf && Number(pk.gc)===real.gc){
       puntos += (PUNTOS.marcador[et]||0); exactos++;
@@ -221,14 +229,14 @@ function rankingJson_(){
 
 /* ============ helpers ============ */
 function onOpen(){
-  SpreadsheetApp.getUi().createMenu("🏆 Quiniela")
+  SpreadsheetApp.getUi().createMenu("Quiniela")
     .addItem("Preparar pestañas de Resultados", "setupResultados")
     .addItem("Recalcular ranking", "computeRanking")
     .addToUi();
 }
 function parseBool_(v){
   if(v===true) return true;
-  return ["true","si","sí","1","x","✓","verdadero"].indexOf(String(v).toLowerCase().trim())>=0;
+  return ["true","si","1","x","verdadero"].indexOf(String(v).toLowerCase().trim())>=0;
 }
 function numOr_(v){ const n=Number(v); return isNaN(n)?null:n; }
 function saveFile_(file, hint){

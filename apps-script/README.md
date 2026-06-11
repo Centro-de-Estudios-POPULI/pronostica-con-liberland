@@ -19,7 +19,7 @@ Apps Script, que escribe en una Hoja de Cálculo. Los comprobantes van a una car
 
 ## Qué se guarda
 - Pestaña **Participantes**: `id, nombre, apellido, documento, whatsapp, email, ciudad, comprobante, fecha, comprobante_nro`.
-- Pestaña **Pronosticos**: `id, nombre, documento, actualizado, avance%, campeon, finalista, tercer_puesto, grupos_json, partidos_json` (1 fila por jugador; se actualiza con cada cambio).
+- Pestaña **Pronosticos**: `id, nombre, documento, actualizado, avance%, campeon, finalista, tercer_puesto, pronostico_json, grupos_enviados, nostradamus, nostra_at` (1 fila por jugador; se actualiza con cada cambio). `pronostico_json` (columna I) trae clasificados + llaves resueltos. Los 3 últimos campos (columnas J, K, L) registran si el jugador **envió su fase de grupos** (1/0), si **selló su Nostradamus** (1/0) y **cuándo** (fecha ISO).
 
 El **id** lo genera la página al inscribirse y queda en el navegador del jugador, así sus
 pronósticos (cargados después, incluso otro día) se vinculan a su registro.
@@ -38,3 +38,8 @@ el detalle completo; si querés expandirlas a columnas, lo hacemos con un script
 - **Nota:** el `comprobante_nro` se guarda como columna nueva. En una Hoja creada antes de este
   cambio, la cabecera de esa columna puede quedar vacía pero los datos igual se escriben en la
   columna J; opcional poner el título `comprobante_nro` en J1 a mano.
+- **Nota (Pronosticos):** `grupos_enviados`, `nostradamus` y `nostra_at` se agregaron al final
+  (columnas J, K, L) para no correr `pronostico_json` ni romper `computeRanking` (que lee la
+  columna I). En una Hoja existente las cabeceras J1/K1/L1 pueden quedar vacías, pero los datos
+  se escriben igual; opcional rotularlas a mano. **Tras editar `Code.gs` hay que re-desplegar
+  Versión nueva** (Administrar implementaciones → editar) para que la URL `/exec` tome el cambio.
