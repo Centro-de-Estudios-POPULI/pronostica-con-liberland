@@ -41,7 +41,7 @@ const form = document.getElementById("form");
 const errorEl = document.getElementById("form-error");
 const submitBtn = document.getElementById("submit");
 function showError(msg) { errorEl.textContent = msg; errorEl.hidden = false; errorEl.scrollIntoView({ behavior: "smooth", block: "center" }); }
-function resetBtn() { submitBtn.disabled = false; submitBtn.textContent = "Inscribirme y armar mi quiniela"; }
+function resetBtn() { submitBtn.disabled = false; submitBtn.textContent = "Inscribirme y armar mi pronóstico"; }
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -93,7 +93,7 @@ form.addEventListener("submit", async (e) => {
       try {
         const q = new URLSearchParams({ action: "existe", ci: player.documento, comp: comprobanteNro });
         const chk = await fetch(CONFIG.APPS_SCRIPT_URL + "?" + q.toString()).then(r => r.json());
-        if (chk && chk.ci)   { resetBtn(); return showError("Ese documento (CI) ya está inscrito. Si ya participaste, entrá a tu quiniela desde el menú."); }
+        if (chk && chk.ci)   { resetBtn(); return showError("Ese documento (CI) ya está inscrito. Si ya participaste, entrá a tu pronóstico desde el menú."); }
         if (chk && chk.comp) { resetBtn(); return showError("Ese número de comprobante ya fue registrado. Cada compra puede inscribirse una sola vez."); }
       } catch (e) { console.warn("Chequeo de duplicado no disponible; continúo (el servidor deduplica igual).", e); }
 
@@ -114,7 +114,7 @@ form.addEventListener("submit", async (e) => {
 function goToQuiniela() {
   // tras inscribirse, directo a armar la quiniela.
   // La invitación a la comunidad se ofrece al CERRAR la fase de grupos (en jugar.html).
-  submitBtn.textContent = "¡Listo! Abriendo tu quiniela…";
+  submitBtn.textContent = "¡Listo! Abriendo tu pronóstico…";
   window.location.href = "jugar.html";
 }
 

@@ -233,7 +233,7 @@ function updateProgress(){
   const f=document.getElementById('pg-fill'), l=document.getElementById('pg-label');
   if(f) f.style.width=st.pct+'%';
   if(l) l.textContent=st.pct+'%';
-  if(st.pct===100 && !_allDoneShown){ _allDoneShown=true; toast('🏆 ¡Quiniela completa! Mucha suerte',''); }
+  if(st.pct===100 && !_allDoneShown){ _allDoneShown=true; toast('🏆 ¡Pronóstico completo! Mucha suerte',''); }
   else if(st.pct<100) _allDoneShown=false;
 }
 
@@ -264,7 +264,7 @@ function openResumen(){
   const champ=getWinner(104), fin=resultOf(104), third=getWinner(103);
   const finalists=[fin.A,fin.B].some(x=>x!=null)?`${nm(fin.A)} <b>vs</b> ${nm(fin.B)}`:'Por definir';
   const st=progressStats();
-  body.innerHTML=`<h3 class="modal__h">📋 Mi quiniela</h3>
+  body.innerHTML=`<h3 class="modal__h">📋 Mi pronóstico</h3>
     <p class="modal__p">Avance: <b>${st.pct}%</b> (${st.done}/${st.total})</p>
     <div class="res-block"><h4>🏆 Campeón</h4><p>${nm(champ)}</p></div>
     <div class="res-block"><h4>Final</h4><p>${finalists}</p></div>
@@ -289,8 +289,8 @@ function openResumen(){
 function share(){
   const champ=getWinner(104);
   const txt = champ!=null
-    ? `Mi campeón en la quiniela Stanley es ${team(champ).name} 🏆 ¿Te animás a pronosticar?`
-    : `Armé mi quiniela en Pronosticá con Stanley 🏆 ¿Te animás?`;
+    ? `Mi campeón en Pronosticá con Stanley es ${team(champ).name} 🏆 ¿Te animás a pronosticar?`
+    : `Armé mi pronóstico en Pronosticá con Stanley 🏆 ¿Te animás?`;
   const url='https://centro-de-estudios-populi.github.io/pronostica-con-stanley/';
   if(navigator.share){ navigator.share({title:'Pronosticá con Stanley',text:txt,url}).catch(()=>{}); }
   else { window.open('https://wa.me/?text='+encodeURIComponent(txt+' '+url),'_blank'); }
@@ -405,8 +405,8 @@ async function shareImage(){
 function defaultShareText(){
   const champ=getWinner(104);
   return champ!=null
-    ? `Mi campeón en la quiniela Stanley es ${team(champ).name} 🏆 ¿Te animás?`
-    : 'Armé mi quiniela en Pronosticá con Stanley 🏆';
+    ? `Mi campeón en Pronosticá con Stanley es ${team(champ).name} 🏆 ¿Te animás?`
+    : 'Armé mi pronóstico en Pronosticá con Stanley 🏆';
 }
 function showSharePreview(blob, opts){
   opts = opts||{};
@@ -532,7 +532,7 @@ async function buildResumenCanvas(withMedia){
   // kicker
   x.textAlign='center';
   x.fillStyle='#b59677'; x.font='800 26px Montserrat, sans-serif';
-  x.fillText('MI QUINIELA · TEMPORADA FUTBOLERA', W/2, 192);
+  x.fillText('MI PRONÓSTICO · TEMPORADA FUTBOLERA', W/2, 192);
 
   // campeón
   x.fillStyle='rgba(255,255,255,.9)'; x.font='800 30px Montserrat, sans-serif'; x.fillText('TU CAMPEÓN', W/2, 240);
@@ -609,11 +609,11 @@ async function shareResumen(){
   if(!blob){ toast('No se pudo generar la imagen','warn'); return; }
   const champ=getWinner(104);
   showSharePreview(blob, {
-    title:'📲 Compartí tu quiniela',
-    filename:'mi-quiniela-stanley.png',
+    title:'📲 Compartí tu pronóstico',
+    filename:'mi-pronostico-stanley.png',
     text: champ!=null
-      ? `Mi quiniela Stanley — campeón: ${team(champ).name} 🏆 ¿Te animás a pronosticar?`
-      : 'Armé mi quiniela en Pronosticá con Stanley 🏆 ¿Te animás?'
+      ? `Mi pronóstico Stanley — campeón: ${team(champ).name} 🏆 ¿Te animás a pronosticar?`
+      : 'Armé mi pronóstico en Pronosticá con Stanley 🏆 ¿Te animás?'
   });
 }
 
