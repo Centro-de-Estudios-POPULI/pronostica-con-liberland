@@ -338,6 +338,21 @@ html[data-phase="eliminatorias"] .only-inscripcion{display:none}
 .footer__links{font-size:13px;line-height:1.9}
 .footer__links a{color:var(--tan)}
 
+/* tabs de ranking + badges de estado */
+.rank-tabs{display:flex;gap:8px;justify-content:center;margin:24px 0 10px;flex-wrap:wrap}
+.rank-tab{font-family:'Montserrat',sans-serif;font-weight:800;font-size:13px;padding:11px 20px;border-radius:999px;
+  border:1.5px solid var(--line-soft);background:#fff;color:var(--text);cursor:pointer;transition:.15s}
+.rank-tab:hover{border-color:var(--tan)}
+.rank-tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.est{display:inline-block;font-family:'Montserrat',sans-serif;font-weight:800;font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.4px;padding:3px 9px;border-radius:999px}
+.est--ok{background:rgba(1,166,106,.14);color:var(--green-2)}
+.est--out{background:rgba(218,41,28,.12);color:#b3261e}
+.est--pend{background:var(--mist);color:var(--text-soft)}
+.score-block__tag{display:inline-block;font-family:'Montserrat',sans-serif;font-weight:800;font-size:10px;text-transform:uppercase;
+  letter-spacing:.5px;padding:4px 10px;border-radius:999px;background:var(--mist);color:var(--text-soft);vertical-align:middle;margin-left:8px}
+.score-block__tag--main{background:var(--green);color:#fff}
+
 /* responsive */
 @media(max-width:860px){
   .steps{grid-template-columns:1fr 1fr}

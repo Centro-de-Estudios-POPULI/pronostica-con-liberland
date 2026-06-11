@@ -25,8 +25,12 @@
 </header>
 
 <section class="section">
-  <h2 class="h2">Ranking</h2>
-  <p class="section__lead">Tabla de posiciones de la quiniela. Se actualiza a medida que se cargan los resultados de cada partido.</p>
+  <h2 class="h2">Rankings</h2>
+  <p class="section__lead">Dos competencias: el <strong>Ranking General Stanley</strong> y el <strong>Modo Nostradamus</strong>. Se actualizan al cerrar cada etapa.</p>
+  <div class="rank-tabs">
+    <button class="rank-tab active" data-tab="general">Ranking General Stanley</button>
+    <button class="rank-tab" data-tab="nostra">Modo Nostradamus</button>
+  </div>
   <p id="lb-updated" class="lb-updated"></p>
   <div id="lb"></div>
 </section>
@@ -34,39 +38,42 @@
 <!-- ===== CÓMO SE PUNTÚA ===== -->
 <section class="section section--cream" id="puntajes">
   <h2 class="h2">¿Cómo se puntúa?</h2>
-  <p class="section__lead">Cada acierto suma. Cuanto más avanzada la ronda, más valen tus pronósticos — y si clavás el marcador exacto, ganás puntos extra.</p>
 
-  <!-- Fase de grupos -->
+  <!-- Ranking General Stanley -->
   <div class="score-block">
-    <h3 class="score-block__title">Fase de grupos</h3>
-    <div class="score-cards">
-      <div class="score-card">
-        <span class="score-card__pts">+3</span>
-        <p>Por cada selección que <strong>clasifique</strong> a la siguiente ronda.</p>
-      </div>
-      <div class="score-card">
-        <span class="score-card__pts score-card__pts--bonus">+1</span>
-        <p>Bonus si además <strong>acertás el puesto</strong> exacto (1.º o 2.º del grupo).</p>
-      </div>
+    <h3 class="score-block__title">Ranking General Stanley <span class="score-block__tag score-block__tag--main">Competencia principal</span></h3>
+    <p class="score-block__note">Cada selección que clasifica suma 1 punto. El corte define quiénes avanzan.</p>
+    <div class="ptable-wrap" style="margin-top:18px">
+      <table class="ptable">
+        <thead><tr><th>Dinámica</th><th>Puntaje</th></tr></thead>
+        <tbody>
+          <tr><td>Cada selección clasificada acertada</td><td>1 punto</td></tr>
+          <tr><td>Máximo posible en fase de grupos</td><td>32 puntos</td></tr>
+          <tr><td>Corte mínimo</td><td>24 aciertos</td></tr>
+          <tr><td>Clasificación</td><td>Top 50% + ≥24</td></tr>
+          <tr><td>Desempate principal</td><td>Total de goles de grupos</td></tr>
+        </tbody>
+      </table>
     </div>
+    <p class="score-block__note">El Ranking General continúa con nuevas dinámicas por etapa, comunicadas en la comunidad de Stanley Bolivia.</p>
   </div>
 
-  <!-- Llaves eliminatorias -->
+  <!-- Modo Nostradamus -->
   <div class="score-block">
-    <h3 class="score-block__title">Llaves eliminatorias</h3>
-    <p class="score-block__note">Ganás los puntos de <strong>«Avanza»</strong> cuando acertás qué equipo pasa esa ronda. Si además clavás el <strong>marcador exacto</strong>, sumás el extra.</p>
+    <h3 class="score-block__title">Modo Nostradamus <span class="score-block__tag">Desafío opcional</span></h3>
+    <p class="score-block__note">Puntuación propia: predecí el cuadro completo. Acertar quién avanza suma; clavar el marcador exacto suma extra.</p>
     <div class="score-table">
       <div class="score-row score-row--head"><span>Ronda</span><span>Avanza</span><span>Marcador exacto</span></div>
-      <div class="score-row"><span>16avos de final</span><span class="score-v">4</span><span class="score-v score-v--x">+3</span></div>
-      <div class="score-row"><span>Octavos de final</span><span class="score-v">6</span><span class="score-v score-v--x">+4</span></div>
-      <div class="score-row"><span>Cuartos de final</span><span class="score-v">8</span><span class="score-v score-v--x">+5</span></div>
+      <div class="score-row"><span>16avos</span><span class="score-v">4</span><span class="score-v score-v--x">+3</span></div>
+      <div class="score-row"><span>Octavos</span><span class="score-v">6</span><span class="score-v score-v--x">+4</span></div>
+      <div class="score-row"><span>Cuartos</span><span class="score-v">8</span><span class="score-v score-v--x">+5</span></div>
       <div class="score-row"><span>Semifinal</span><span class="score-v">12</span><span class="score-v score-v--x">+6</span></div>
       <div class="score-row"><span>Tercer puesto</span><span class="score-v">8</span><span class="score-v score-v--x">+5</span></div>
       <div class="score-row score-row--final"><span>Final · Campeón</span><span class="score-v">20</span><span class="score-v score-v--x">+8</span></div>
     </div>
   </div>
 
-  <p class="section__foot">Desempates: primero por cantidad de <strong>marcadores exactos</strong> acertados y, de persistir, por orden de inscripción.</p>
+  <p class="section__foot">El Modo Nostradamus es opcional y paralelo: no reemplaza ni reduce la importancia del Ranking General Stanley.</p>
 </section>
 
 <footer class="footer pitch pitch--dark">

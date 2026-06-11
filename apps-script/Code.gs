@@ -23,12 +23,14 @@ const FOLDER_ID = "PEGAR_ID_DE_LA_CARPETA";
 
 /* ====== PUNTOS (editables) ====== */
 const PUNTOS = {
-  clasificado: 3,      // por cada seleccion que clasifico a dieciseisavos
-  puesto_exacto: 1,    // bonus si ademas acerto el puesto (1ro o 2do)
-  avanza:   { r32:4,  r16:6,  qf:8,  sf:12, tercer:8, final:20 },
-  marcador: { r32:3,  r16:4,  qf:5,  sf:6,  tercer:5, final:8  }
+  clasificado: 1,      // Ranking General Stanley: +1 por cada seleccion que clasifico (modelo del brief; max 32)
+  puesto_exacto: 0,    // sin bonus de puesto
+  avanza:   { r32:4,  r16:6,  qf:8,  sf:12, tercer:8, final:20 },   // (Modo Nostradamus: por avanzar)
+  marcador: { r32:3,  r16:4,  qf:5,  sf:6,  tercer:5, final:8  }    // (Modo Nostradamus: marcador exacto)
 };
-const BONUS_PUESTO = true;
+const BONUS_PUESTO = false;
+const CORTE_MINIMO = 24;            // aciertos minimos para clasificar (Top 50% + >= 24)
+const GOLES_REALES_GRUPOS = null;   // total real de goles de fase de grupos (desempate). Poner el numero cuando se sepa.
 
 /* equipos por grupo (deben coincidir EXACTO con quiniela.js) */
 const GRUPOS_TEAMS = {
@@ -69,6 +71,7 @@ function doPost(e){
 function doGet(e){
   const p = (e && e.parameter) || {};
   if(p.action==="ranking") return json(rankingJson_());
+  if(p.action==="ranking_nostra") return json(rankingNostraJson_());
   if(p.action==="existe"){
     const dup = findDuplicates_(p.ci||"", p.comp||"", p.id||"");
     return json({ok:true, ci:dup.ci, comp:dup.comp});
@@ -121,12 +124,13 @@ function normKey_(v){ return String(v==null?"":v).toLowerCase().replace(/\s+/g,"
 function savePicks_(d){
   const sh = sheet_("Pronosticos",
     ["id","nombre","documento","actualizado","avance%","campeon","finalista","tercer_puesto","pronostico_json",
-     "grupos_enviados","nostradamus","nostra_at"]);
+     "grupos_enviados","nostradamus","nostra_at","goles_grupos","campeon_ref"]);
   upsert_(sh, 0, d.id, [
     d.id||"", d.nombre||"", d.documento||"", new Date(), d.avance||0,
     d.campeon||"", d.finalista||"", d.tercero||"",
     JSON.stringify(d.pronostico||{}),
-    d.grupos_enviados?1:0, d.nostradamus?1:0, "'"+(d.nostra_at||"")
+    d.grupos_enviados?1:0, d.nostradamus?1:0, "'"+(d.nostra_at||""),
+    (d.goles_grupos===""||d.goles_grupos==null)?"":Number(d.goles_grupos), d.campeon_ref||""
   ]);
   return {ok:true};
 }
@@ -172,50 +176,78 @@ function computeRanking(){
     info[String(r[0])] = { ciudad:r[6]||"", fecha:r[8]||"", nombre:r[1]||"" };
   });}
 
+  const hayResultados = Object.keys(realQual).some(k=> realQual[k].clasifico);
+
   // --- jugadores ---
   const pr = ss.getSheetByName("Pronosticos");
   const rows = pr ? pr.getDataRange().getValues().slice(1) : [];
-  const tabla = rows.map(r=>{
+  const players = rows.map(r=>{
     const id=String(r[0]); let pron={};
     try{ pron = JSON.parse(r[8]||"{}"); }catch(e){}
-    const sc = scorePlayer_(pron, realQual, realRound);
     const meta = info[id] || {};
-    return { id, nombre: r[1]||meta.nombre||"", ciudad: meta.ciudad||"",
-             puntos: sc.puntos, exactos: sc.exactos, fecha: meta.fecha||"" };
+    const ptsGrupos = scoreGroups_(pron, realQual);
+    return {
+      id, nombre: r[1]||meta.nombre||"", ciudad: meta.ciudad||"", fecha: meta.fecha||"",
+      nostra: parseBool_(r[10]), golesPred: numOr_(r[12]),
+      ptsGrupos: ptsGrupos,
+      ptsNostra: ptsGrupos + scoreKnockout_(pron, realRound)
+    };
   });
 
-  tabla.sort((a,b)=> b.puntos-a.puntos || b.exactos-a.exactos || (new Date(a.fecha))-(new Date(b.fecha)));
-
-  const sh = sheet_("Ranking", ["pos","id","nombre","ciudad","puntos","exactos","actualizado"]);
-  sh.clearContents(); sh.appendRow(["pos","id","nombre","ciudad","puntos","exactos","actualizado"]);
+  const golesDiff = p => (GOLES_REALES_GRUPOS==null || p.golesPred==null) ? null : Math.abs(p.golesPred - GOLES_REALES_GRUPOS);
   const now = new Date();
-  tabla.forEach((t,i)=> sh.appendRow([i+1, t.id, t.nombre, t.ciudad, t.puntos, t.exactos, now]));
-  SpreadsheetApp.getActive().toast("Ranking recalculado: "+tabla.length+" jugadores.");
+
+  // ===== RANKING GENERAL STANLEY (todos; +1 por clasificada; corte Top 50% + >=24) =====
+  const general = players.slice().sort((a,b)=>{
+    if(b.ptsGrupos !== a.ptsGrupos) return b.ptsGrupos - a.ptsGrupos;
+    const da=golesDiff(a), db=golesDiff(b);
+    if(da!=null && db!=null && da!==db) return da - db;
+    return (new Date(a.fecha)) - (new Date(b.fecha));
+  });
+  const corteTop = Math.ceil(general.length/2);
+  const shG = sheet_("Ranking", ["pos","id","nombre","ciudad","puntos","estado","actualizado"]);
+  shG.clearContents(); shG.appendRow(["pos","id","nombre","ciudad","puntos","estado","actualizado"]);
+  general.forEach((t,i)=>{
+    let estado = "Pendiente";
+    if(hayResultados) estado = (i < corteTop && t.ptsGrupos >= CORTE_MINIMO) ? "Clasificado" : "Eliminado";
+    shG.appendRow([i+1, t.id, t.nombre, t.ciudad, t.ptsGrupos, estado, now]);
+  });
+
+  // ===== RANKING MODO NOSTRADAMUS (solo quienes lo sellaron) =====
+  const nostra = players.filter(p=>p.nostra)
+    .sort((a,b)=> b.ptsNostra - a.ptsNostra || (new Date(a.fecha)) - (new Date(b.fecha)));
+  const shN = sheet_("Ranking_nostradamus", ["pos","id","nombre","ciudad","puntos","actualizado"]);
+  shN.clearContents(); shN.appendRow(["pos","id","nombre","ciudad","puntos","actualizado"]);
+  nostra.forEach((t,i)=> shN.appendRow([i+1, t.id, t.nombre, t.ciudad, t.ptsNostra, now]));
+
+  SpreadsheetApp.getActive().toast("Rankings recalculados: "+general.length+" General, "+nostra.length+" Nostradamus.");
 }
 
-function scorePlayer_(pron, realQual, realRound){
-  let puntos=0, exactos=0;
-  // grupos
+/* Ranking General: +1 por cada seleccion que realmente clasifico (max 32). */
+function scoreGroups_(pron, realQual){
+  let p=0;
   (pron.clasificados||[]).forEach(c=>{
     const real = realQual[String(c.e).trim()];
     if(real && real.clasifico){
-      puntos += PUNTOS.clasificado;
-      if(BONUS_PUESTO && (c.p===1||c.p===2) && real.puesto===c.p) puntos += PUNTOS.puesto_exacto;
+      p += PUNTOS.clasificado;
+      if(BONUS_PUESTO && (c.p===1||c.p===2) && real.puesto===c.p) p += PUNTOS.puesto_exacto;
     }
   });
-  // llaves: por equipo y por ronda
+  return p;
+}
+/* Modo Nostradamus: por avanzar + marcador exacto, por equipo y ronda. */
+function scoreKnockout_(pron, realRound){
+  let p=0;
   const llaves = pron.llaves||{};
   Object.keys(llaves).forEach(num=>{
     const et = matchEtapa_(num);
-    const pk = llaves[num];            // {av, gf, gc}
+    const pk = llaves[num];
     const real = (realRound[et]||{})[String(pk.av).trim()];
-    if(!real) return;                  // ese equipo NO avanzo realmente en esa ronda
-    puntos += (PUNTOS.avanza[et]||0);
-    if(pk.gf!=="" && pk.gc!=="" && Number(pk.gf)===real.gf && Number(pk.gc)===real.gc){
-      puntos += (PUNTOS.marcador[et]||0); exactos++;
-    }
+    if(!real) return;
+    p += (PUNTOS.avanza[et]||0);
+    if(pk.gf!=="" && pk.gc!=="" && Number(pk.gf)===real.gf && Number(pk.gc)===real.gc) p += (PUNTOS.marcador[et]||0);
   });
-  return {puntos, exactos};
+  return p;
 }
 
 function rankingJson_(){
@@ -223,8 +255,16 @@ function rankingJson_(){
   const sh = ss.getSheetByName("Ranking");
   if(!sh || sh.getLastRow()<2) return {ok:true, ranking:[], actualizado:""};
   const data = sh.getDataRange().getValues();
-  const out = data.slice(1).map(r=>({pos:r[0], nombre:r[2], ciudad:r[3], puntos:r[4], exactos:r[5]}));
+  const out = data.slice(1).map(r=>({pos:r[0], nombre:r[2], ciudad:r[3], puntos:r[4], estado:r[5]}));
   return {ok:true, ranking:out, actualizado: String(data[1][6]||"")};
+}
+function rankingNostraJson_(){
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  const sh = ss.getSheetByName("Ranking_nostradamus");
+  if(!sh || sh.getLastRow()<2) return {ok:true, ranking:[], actualizado:""};
+  const data = sh.getDataRange().getValues();
+  const out = data.slice(1).map(r=>({pos:r[0], nombre:r[2], ciudad:r[3], puntos:r[4]}));
+  return {ok:true, ranking:out, actualizado: String(data[1][5]||"")};
 }
 
 /* ============ helpers ============ */

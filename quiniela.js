@@ -119,7 +119,7 @@ const matchLabel = num => LLAVE[num] || ('Cruce '+num);
 /* ---- estado ---- */
 const KEY = 'stanley_quiniela_v2';
 const DEFAULT = {rank:{}, thirds:[], scores:{}, adv:{}, design:false, active:'grupos',
-  groupsSubmitted:false, nostradamus:{sent:false, at:''}};
+  groupsSubmitted:false, nostradamus:{sent:false, at:''}, golesGrupos:'', campeonRef:null};
 let state = load();
 function load(){
   let s; try{ s = Object.assign({}, DEFAULT, JSON.parse(localStorage.getItem(KEY))||{}); }catch(e){ s = Object.assign({},DEFAULT); }
@@ -167,6 +167,7 @@ function cloudSave(){
     finalista:[fin.A,fin.B].map(_nm).filter(Boolean).join(' / '), tercero:_nm(getWinner(103)),
     grupos_enviados: state.groupsSubmitted?1:0,
     nostradamus: state.nostradamus.sent?1:0, nostra_at: state.nostradamus.at||'',
+    goles_grupos: state.golesGrupos||'', campeon_ref: _nm(state.campeonRef),
     pronostico: buildPronostico() };
   fetch(APPS_URL, { method:'POST', body:JSON.stringify(body) })
     .then(()=>setCloud('ok')).catch(()=>setCloud('err'));
@@ -698,7 +699,7 @@ function renderStage(id){
       <span class="stage__kicker">${s.etapa}</span>
       <h2>${s.title}</h2><p>${s.lead}</p>
       <div class="stage__meta">${stageMeta(id)}</div></div>`;
-  if(id==='grupos'){ wrap.appendChild(renderGroups()); wrap.appendChild(renderThirds()); wrap.appendChild(groupsSubmitBar()); }
+  if(id==='grupos'){ wrap.appendChild(renderGroups()); wrap.appendChild(renderThirds()); wrap.appendChild(basePronostico()); wrap.appendChild(groupsSubmitBar()); }
   else { wrap.appendChild(renderRound(id)); }
   wrap.appendChild(stageNav(id));
   stagesEl.appendChild(wrap);
@@ -973,6 +974,37 @@ function openConfirmModal({title, body, ok, onOk}){
 }
 
 /* ---- ETAPA 1: barra de envío de la fase de grupos ---- */
+/* ---- pronóstico base (desempate por goles + campeón de referencia) ---- */
+const baseDone = () => state.golesGrupos!=='' && state.golesGrupos!=null
+  && !isNaN(parseInt(state.golesGrupos,10)) && state.campeonRef!=null;
+function basePronostico(){
+  const locked=groupsLocked();
+  const wrap=document.createElement('div'); wrap.className='base-pron';
+  wrap.innerHTML=`
+    <h3 class="base-pron__title">Para cerrar tu fase de grupos</h3>
+    <p class="base-pron__lead">Dos datos del Ranking General Stanley: el desempate y tu campeón de referencia.</p>
+    <div class="base-pron__grid">
+      <label class="base-field">
+        <span>⚽ Total de goles de la fase de grupos <small>(desempate)</small></span>
+        <input id="base-goles" type="number" min="0" max="400" inputmode="numeric" value="${state.golesGrupos}" placeholder="Ej. 140" ${locked?'disabled':''}>
+      </label>
+      <label class="base-field">
+        <span>🏆 Campeón de referencia</span>
+        <select id="base-champ" ${locked?'disabled':''}>
+          <option value="">Elegí una selección…</option>
+          ${TEAMS.map(t=>`<option value="${t.id}"${state.campeonRef===t.id?' selected':''}>${t.name}</option>`).join('')}
+        </select>
+      </label>
+    </div>`;
+  if(!locked){
+    wrap.querySelector('#base-goles').addEventListener('change',e=>{
+      state.golesGrupos=e.target.value; save(); renderStepper(); renderStage('grupos'); });
+    wrap.querySelector('#base-champ').addEventListener('change',e=>{
+      state.campeonRef=e.target.value===''?null:Number(e.target.value); save(); renderStepper(); renderStage('grupos'); });
+  }
+  return wrap;
+}
+
 function groupsSubmitBar(){
   const wrap=document.createElement('div'); wrap.className='submit-bar';
   if(state.groupsSubmitted){
@@ -992,12 +1024,13 @@ function groupsSubmitBar(){
     }
     return wrap;
   }
-  const done=groupsDone();
-  const b=document.createElement('button'); b.className='btn btn--lg'; b.disabled=!done;
-  b.textContent = done ? '✅ Enviar fase de grupos' : 'Completá 12 grupos y 8 terceros para enviar';
+  const gd=groupsDone(), ready=gd && baseDone();
+  const b=document.createElement('button'); b.className='btn btn--lg'; b.disabled=!ready;
+  b.textContent = ready ? '✅ Enviar fase de grupos'
+    : (gd ? 'Completá goles de desempate y campeón' : 'Completá 12 grupos y 8 terceros para enviar');
   b.onclick=submitGroups;
   wrap.appendChild(b);
-  if(!done){
+  if(!ready){
     const hint=document.createElement('p'); hint.className='submit-bar__hint';
     hint.textContent='Al enviar se cierra tu participación en la Etapa 1: no podrás cambiar tus clasificados.';
     wrap.appendChild(hint);
@@ -1005,7 +1038,7 @@ function groupsSubmitBar(){
   return wrap;
 }
 function submitGroups(){
-  if(!groupsDone() || state.groupsSubmitted) return;
+  if(!groupsDone() || !baseDone() || state.groupsSubmitted) return;
   openConfirmModal({
     title:'¿Enviar tu fase de grupos?',
     body:'Una vez enviada <b>no podrás modificar</b> tus clasificados. Con esto cerrás tu participación en la Etapa 1 (primera entrega de premios).',

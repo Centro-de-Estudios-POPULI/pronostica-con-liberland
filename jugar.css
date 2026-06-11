@@ -209,6 +209,19 @@
 .groups.ro .grow.ro:hover{background:none}
 .third.ro{pointer-events:none}
 
+/* pronóstico base (desempate + campeón de referencia) */
+.base-pron{margin-top:30px;background:#fff;border:1px solid var(--line-soft);border-radius:14px;padding:22px}
+.base-pron__title{font-family:'Montserrat',sans-serif;font-weight:800;color:var(--ink);font-size:18px;text-transform:uppercase}
+.base-pron__lead{color:var(--text-soft);font-size:13.5px;margin:4px 0 14px;line-height:1.5}
+.base-pron__grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.base-field{display:flex;flex-direction:column;gap:7px;font-size:13.5px;font-weight:700;color:var(--ink)}
+.base-field small{font-weight:400;color:var(--text-soft)}
+.base-field input,.base-field select{font-family:inherit;font-size:16px;font-weight:600;padding:12px 13px;
+  border:1.5px solid #ddd;border-radius:10px;color:var(--ink);outline:none;background:#fff}
+.base-field input:focus,.base-field select:focus{border-color:var(--tan)}
+.base-field input:disabled,.base-field select:disabled{background:var(--mist);color:var(--text-soft)}
+@media(max-width:560px){ .base-pron__grid{grid-template-columns:1fr} }
+
 /* barra de envío (grupos / Nostradamus) */
 .submit-bar{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:36px;text-align:center}
 .submit-bar .btn:disabled{opacity:.55;cursor:not-allowed}
