@@ -187,6 +187,14 @@ html[data-phase="eliminatorias"] .only-inscripcion{display:none}
 .chip.sel{background:var(--ink);color:var(--tan);border-color:var(--ink)}
 
 .terms{display:flex;gap:12px;align-items:flex-start;margin:26px 0 18px;font-size:14px;color:var(--text);line-height:1.5}
+.terms-group{margin:24px 0 18px;display:flex;flex-direction:column;gap:14px}
+.terms-group .terms{margin:0}
+.terms input{margin-top:2px;flex:0 0 auto;width:18px;height:18px;accent-color:var(--green)}
+.hero__deadline{margin-top:18px;display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);
+  border-radius:999px;padding:9px 18px;font-size:14px;color:#fff}
+.hero__deadline strong{color:var(--tan)}
+.form-deadline{margin-top:10px;font-size:13.5px;color:var(--tan-dark);font-weight:700}
+.disclaimer{font-size:12px;opacity:.85;line-height:1.6;border-top:1px solid rgba(255,255,255,.15);padding-top:14px;margin-top:6px}
 .terms input{margin-top:3px;width:20px;height:20px;accent-color:var(--tan);flex-shrink:0}
 .terms a{color:var(--tan-dark);font-weight:700}
 .form-error{background:#fdeaea;color:#b3261e;border:1px solid #f3c0bc;border-radius:8px;padding:12px 14px;font-size:14px;font-weight:600;margin-bottom:14px}

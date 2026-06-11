@@ -48,11 +48,16 @@ form.addEventListener("submit", async (e) => {
   errorEl.hidden = true;
 
   for (const el of form.querySelectorAll("input[required]")) {
-    if (el.type === "file") continue;
+    if (el.type === "file" || el.type === "checkbox") continue;
     if (!el.value.trim()) { showError("Completá todos los campos obligatorios."); el.focus(); return; }
   }
-  if (!fileData) return showError("Subí tu comprobante de compra.");
-  if (!document.getElementById("terminos").checked) return showError("Tenés que aceptar las bases y condiciones.");
+  if (!form.canal.value) { showError("Elegí tu canal de compra."); form.canal.focus(); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.value.trim())) { showError("Revisá tu correo: no parece válido."); form.email.focus(); return; }
+  if (form.whatsapp.value.replace(/\D/g, "").length < 7) { showError("Revisá tu WhatsApp: falta el número."); form.whatsapp.focus(); return; }
+  if (!fileData) return showError("Subí tu factura o respaldo de compra.");
+  if (!document.getElementById("terminos").checked)  return showError("Tenés que aceptar las bases y la veracidad de tus datos.");
+  if (!document.getElementById("validacion").checked) return showError("Tenés que aceptar la validación de tu inscripción.");
+  if (!document.getElementById("datos").checked)      return showError("Tenés que aceptar el tratamiento de datos y comunicaciones.");
 
   const player = {
     id: newId(),
@@ -70,6 +75,7 @@ form.addEventListener("submit", async (e) => {
     whatsapp: form.whatsapp.value.trim(),
     email: form.email.value.trim(),
     ciudad: form.ciudad.value.trim(),
+    canal: form.canal.value,
     comprobante_nro: comprobanteNro,
     enviado: new Date().toISOString(),
     comprobante: fileData

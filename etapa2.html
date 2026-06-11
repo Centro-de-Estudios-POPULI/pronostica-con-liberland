@@ -79,7 +79,7 @@
   <div class="locked-msg">
     <div class="lk__ico">🔒</div>
     <h3>Etapa 2 — Próximamente</h3>
-    <p>La quiniela en vivo se habilita cuando empiecen las eliminatorias del Mundial. Mientras tanto, armá tu fase de grupos y jugá Nostradamus.</p>
+    <p>La quiniela en vivo se habilita cuando empiecen los cruces eliminatorios. Mientras tanto, armá tu fase de grupos y jugá Nostradamus.</p>
     <a class="btn btn--lg" href="jugar.html" style="margin-top:18px;display:inline-block">Ir a mi quiniela →</a>
   </div>
 </section>
@@ -169,7 +169,7 @@ function card(m){
   const opts = ['<option value="">— elegí —</option>']
     .concat(m.motm.map(p=>`<option>${p}</option>`), '<option>Otro</option>').join('');
   el.innerHTML=`
-    <div class="match__head"><span>${m.ronda} · Partido ${m.n}</span><span class="mdate">${m.hora}</span></div>
+    <div class="match__head"><span>${m.ronda} · Llave ${m.n-72}</span><span class="mdate">${m.hora}</span></div>
     <div class="e2-90">Resultado a los 90'</div>
     <div class="e2-score"><span class="mname">${flag(m.a.iso)} ${m.a.name}</span><input class="e2-num e2-sc" data-side="a" type="number" min="0" max="20" placeholder="–"></div>
     <div class="e2-score"><span class="mname">${flag(m.b.iso)} ${m.b.name}</span><input class="e2-num e2-sc" data-side="b" type="number" min="0" max="20" placeholder="–"></div>

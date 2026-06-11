@@ -6,7 +6,7 @@
 <title>Pronosticá con Stanley</title>
 <meta name="description" content="Comprá tu Stanley, registrá tu comprobante y armá tus pronósticos de la temporada futbolera. Subí en el ranking y ganá premios Stanley." />
 <meta property="og:title" content="Pronosticá con Stanley" />
-<meta property="og:description" content="Armá tu quiniela del Mundial 2026, subí en el ranking y ganá premios Stanley." />
+<meta property="og:description" content="Registrá tu compra Stanley, armá tus pronósticos de la temporada futbolera y ganá premios Stanley." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://centro-de-estudios-populi.github.io/pronostica-con-stanley/" />
 <meta property="og:image" content="https://centro-de-estudios-populi.github.io/pronostica-con-stanley/assets/og-image.png" />
@@ -15,7 +15,7 @@
 <meta property="og:locale" content="es_BO" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Pronosticá con Stanley" />
-<meta name="twitter:description" content="Armá tu quiniela del Mundial 2026 y ganá premios Stanley." />
+<meta name="twitter:description" content="Pronosticá la temporada futbolera y ganá premios Stanley." />
 <meta name="twitter:image" content="https://centro-de-estudios-populi.github.io/pronostica-con-stanley/assets/og-image.png" />
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
@@ -56,8 +56,9 @@
   <div class="hero__inner">
     <span class="kicker">Temporada futbolera 2026</span>
     <h1 class="display">PRONOSTICÁ<br><span class="display__accent">CON STANLEY</span></h1>
-    <p class="hero__lead">Comprá tu Stanley, armá tus pronósticos de la temporada y demostrá que la tenés clara. Cuantos más aciertos, más alto en el ranking — y más cerca de los premios Stanley.</p>
+    <p class="hero__lead">Compraste Stanley, registrá tu compra y participá en una temporada de predicciones futboleras.</p>
 
+    <p class="hero__deadline only-inscripcion">⏳ Inscripciones abiertas hasta el <strong>jueves 18 de junio de 2026, 11:30 a. m.</strong></p>
     <div class="countdown only-inscripcion" id="countdown" aria-label="Cuenta regresiva para el cierre de inscripciones">
       <div class="cd__item"><span id="cd-d">--</span><small>días</small></div>
       <div class="cd__item"><span id="cd-h">--</span><small>hs</small></div>
@@ -67,14 +68,14 @@
     <p class="countdown__label only-inscripcion">Cierre de inscripciones</p>
 
     <div class="hero__cta only-inscripcion">
-      <a href="#registro" class="btn btn--lg">Quiero participar</a>
-      <a href="https://stanley1913.bo/collections/convocados-stanley" class="btn btn--lg btn--ghost" target="_blank" rel="noopener">Ver la colección Convocados</a>
+      <a href="#registro" class="btn btn--lg">Participar ahora</a>
+      <a href="#como-funciona" class="btn btn--lg btn--ghost">Ver cómo funciona</a>
     </div>
     <div class="hero__cta only-eliminatorias">
-      <a href="etapa2.html" class="btn btn--lg">Predecí los partidos de hoy →</a>
+      <a href="etapa2.html" class="btn btn--lg">Ver mis pronósticos →</a>
       <a href="ranking.html" class="btn btn--lg btn--ghost">Ver el ranking</a>
     </div>
-    <p class="hero__legal">Promoción oficial de Stanley Bolivia (Openbrands S.R.L.). No está asociada, patrocinada ni avalada por ningún torneo, selección, organización o competición oficial.</p>
+    <p class="hero__legal">Válido para compras Stanley desde el <strong>1 de mayo de 2026</strong> en tienda Stanley Bolivia, web Stanley Bolivia y distribuidores autorizados.</p>
   </div>
 </section>
 
@@ -155,7 +156,8 @@
     <header class="form-card__head">
       <span class="kicker kicker--dark">Paso 1 · Inscripción</span>
       <h2 class="h2">Inscribite</h2>
-      <p>Completá tus datos y subí tu comprobante de compra. Después armás tu quiniela: grupos, llaves y la final.</p>
+      <p>Completá tus datos y subí tu factura o respaldo de compra. Después armás tu pronóstico: grupos y, opcional, el desafío Nostradamus.</p>
+      <p class="form-deadline">⏳ Inscripciones hasta el <strong>jueves 18 de junio de 2026, 11:30 a. m.</strong></p>
     </header>
 
     <form id="form" novalidate>
@@ -169,21 +171,43 @@
           <label class="field"><span>Correo*</span><input type="email" name="email" required autocomplete="email" /></label>
           <label class="field"><span>Ciudad*</span><input name="ciudad" required autocomplete="address-level2" /></label>
         </div>
-        <label class="field"><span>N° de comprobante / factura* <small>(tal como figura en tu recibo)</small></span><input name="comprobante_nro" required autocomplete="off" /></label>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend class="fs__legend">Tu compra Stanley</legend>
+        <label class="field"><span>Canal de compra*</span>
+          <select name="canal" id="canal" required class="field__select">
+            <option value="">Elegí dónde compraste…</option>
+            <option>Tienda Stanley Bolivia</option>
+            <option>Web Stanley Bolivia</option>
+            <option>Distribuidor autorizado</option>
+          </select>
+        </label>
+        <label class="field"><span>N° de factura o respaldo de compra* <small>(tal como figura en tu recibo)</small></span><input name="comprobante_nro" required autocomplete="off" /></label>
         <label class="field field--file">
-          <span>Comprobante de compra* <small>(foto o PDF, máx. 6 MB)</small></span>
+          <span>Factura o respaldo de compra* <small>(foto o PDF, máx. 6 MB)</small></span>
           <input type="file" name="comprobante" id="comprobante" accept="image/*,application/pdf" required />
-          <span class="file-hint" id="file-hint">Tocá para subir tu comprobante</span>
+          <span class="file-hint" id="file-hint">Tocá para subir tu factura o respaldo</span>
         </label>
       </fieldset>
 
-      <label class="terms">
-        <input type="checkbox" name="terminos" id="terminos" required />
-        <span>Acepto las <a href="#bases">bases y condiciones</a> y el tratamiento de mis datos para esta promoción.</span>
-      </label>
+      <div class="terms-group">
+        <label class="terms">
+          <input type="checkbox" name="terminos" id="terminos" required />
+          <span>Declaro que la información presentada es verdadera, que la compra registrada no ha sido utilizada previamente en esta campaña y acepto las <a href="#bases">bases y condiciones</a> de participación.</span>
+        </label>
+        <label class="terms">
+          <input type="checkbox" name="validacion" id="validacion" required />
+          <span>Acepto que Stanley Bolivia pueda revisar, validar, rechazar o anular mi inscripción en caso de información incompleta, duplicada, inconsistente, ilegible o no verificable.</span>
+        </label>
+        <label class="terms">
+          <input type="checkbox" name="datos" id="datos" required />
+          <span>Acepto el tratamiento de mis datos personales para la gestión de esta campaña y autorizo recibir comunicaciones de Stanley Bolivia por WhatsApp, correo electrónico u otros canales oficiales relacionados con la campaña, beneficios y comunidad Stanley.</span>
+        </label>
+      </div>
 
       <p class="form-error" id="form-error" hidden></p>
-      <button type="submit" class="btn btn--lg btn--full" id="submit">Inscribirme y armar mi quiniela</button>
+      <button type="submit" class="btn btn--lg btn--full" id="submit">Inscribirme y armar mi pronóstico</button>
     </form>
   </div>
 
@@ -212,8 +236,8 @@
   <img class="footer__logo" src="assets/logo-stanley-vertical.png" alt="Stanley" />
   <div class="footer__legal">
     <h3>Bases y condiciones</h3>
-    <p>Promoción organizada por <strong>Openbrands S.R.L.</strong>, representante oficial de Stanley 1913 en Bolivia. Válida para compras de productos Stanley realizadas en <a href="https://stanley1913.bo" target="_blank" rel="noopener">stanley1913.bo</a> y puntos de venta autorizados dentro del período indicado. Participan personas mayores de edad residentes en Bolivia. El registro requiere comprobante de compra válido. El ranking se define por aciertos según el sistema de puntos publicado; los desempates se resuelven según el criterio de las bases y, de persistir, por orden de registro válido.</p>
-    <p><strong>Aviso de marca:</strong> promoción de carácter recreativo. No está asociada, patrocinada, avalada ni vinculada a ningún torneo, selección, organización o competición oficial. Todas las referencias a "selecciones", "temporada" o "fútbol" son de carácter genérico.</p>
+    <p>Campaña organizada por <strong>Stanley Bolivia / Openbrands S.R.L.</strong> Válida para compras de productos Stanley realizadas desde el <strong>1 de mayo de 2026</strong> en Tienda Stanley Bolivia, Web Stanley Bolivia (<a href="https://stanley1913.bo" target="_blank" rel="noopener">stanley1913.bo</a>) y distribuidores autorizados. Inscripciones hasta el <strong>jueves 18 de junio de 2026, 11:30 a. m.</strong> Participan personas mayores de edad residentes en Bolivia. Cada compra válida permite una inscripción por persona y requiere factura o respaldo válido de compra. Stanley Bolivia podrá revisar, validar, rechazar o anular registros incompletos, duplicados, inconsistentes, ilegibles o no verificables.</p>
+    <p class="disclaimer"><strong>Aviso legal:</strong> Esta campaña es organizada exclusivamente por Stanley Bolivia / Openbrands S.R.L. con fines promocionales y recreativos. No está afiliada, patrocinada, administrada, avalada ni asociada con ningún torneo, competición, organización deportiva, federación, selección, patrocinador oficial ni entidad relacionada. Todas las referencias a fútbol, selecciones, temporada, grupos, llaves o pronósticos son utilizadas de forma genérica y recreativa.</p>
     <p>Consultas: <a href="mailto:info@openbrands.com.bo">info@openbrands.com.bo</a> · WhatsApp <a href="https://wa.me/59175133288" target="_blank" rel="noopener">+591 75133288</a></p>
     <p class="footer__copy">© 2026 Openbrands S.R.L. · Stanley 1913 Bolivia · Todos los derechos reservados.</p>
   </div>

@@ -79,7 +79,7 @@ function doGet(e){
 /* ============ REGISTRO ============ */
 function register_(d){
   const sh = sheet_("Participantes",
-    ["id","nombre","apellido","documento","whatsapp","email","ciudad","comprobante","fecha","comprobante_nro"]);
+    ["id","nombre","apellido","documento","whatsapp","email","ciudad","comprobante","fecha","comprobante_nro","canal_compra"]);
   // anti-duplicado: 1 CI y 1 numero de comprobante por persona (ignora la propia fila si reenvia con el mismo id)
   const dup = findDuplicates_(d.documento, d.comprobante_nro, d.id);
   if(dup.ci)   return {ok:false, code:"dup_ci",   error:"Ese documento (CI) ya esta inscrito."};
@@ -89,7 +89,7 @@ function register_(d){
   upsert_(sh, 0, d.id, [
     d.id||"", d.nombre||"", d.apellido||"", d.documento||"",
     "'"+(d.whatsapp||""), d.email||"", d.ciudad||"", fileUrl, new Date(),
-    "'"+(d.comprobante_nro||"")
+    "'"+(d.comprobante_nro||""), d.canal||""
   ]);
   return {ok:true, id:d.id};
 }
@@ -245,7 +245,8 @@ function saveFile_(file, hint){
   const bytes = Utilities.base64Decode(file.b64);
   const name = "comprobante_"+(hint||"")+"_"+Date.now()+extOf_(file.mime, file.name);
   const f = folder.createFile(Utilities.newBlob(bytes, file.mime||"application/octet-stream", name));
-  f.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  // PRIVADO: el comprobante NO queda accesible por link publico; solo el dueno de la Hoja/carpeta lo ve.
+  f.setSharing(DriveApp.Access.PRIVATE, DriveApp.Permission.VIEW);
   return f.getUrl();
 }
 function extOf_(mime, name){

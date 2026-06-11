@@ -107,6 +107,15 @@ const STAGE_MATCHES = {
   final:[103,104]
 };
 
+/* etiqueta genérica por llave (sin numeración oficial de partidos) */
+const LLAVE = {};
+STAGE_MATCHES.r32.forEach((n,i)=> LLAVE[n]='Llave '+(i+1));
+STAGE_MATCHES.r16.forEach((n,i)=> LLAVE[n]='Octavos '+(i+1));
+STAGE_MATCHES.qf.forEach((n,i)=> LLAVE[n]='Cuartos '+(i+1));
+STAGE_MATCHES.sf.forEach((n,i)=> LLAVE[n]='Semifinal '+(i+1));
+LLAVE[103]='3.er puesto'; LLAVE[104]='Final';
+const matchLabel = num => LLAVE[num] || ('Cruce '+num);
+
 /* ---- estado ---- */
 const KEY = 'stanley_quiniela_v2';
 const DEFAULT = {rank:{}, thirds:[], scores:{}, adv:{}, design:false, active:'grupos',
@@ -197,7 +206,7 @@ function stageMeta(id){
   const nums=STAGE_MATCHES[id]; const chosen=nums.filter(n=>state.adv[n]).length;
   let html=`<span class="chip-prog${chosen===nums.length?' ok':''}">Elegidos ${chosen}/${nums.length}</span>`;
   const up=nums.map(n=>({n,t:new Date(MATCHES[n].d).getTime()})).filter(x=>x.t>Date.now()).sort((a,b)=>a.t-b.t)[0];
-  if(up) html+=`<span class="chip-prog">⏱ Cierra P${up.n} ${relTime(MATCHES[up.n].d)}</span>`;
+  if(up) html+=`<span class="chip-prog">⏱ Cierra ${matchLabel(up.n)} ${relTime(MATCHES[up.n].d)}</span>`;
   return html;
 }
 
@@ -239,7 +248,7 @@ function tickNext(){
   let diff=up.t-Date.now();
   const d=Math.floor(diff/864e5), h=Math.floor((diff%864e5)/36e5), m=Math.floor((diff%36e5)/6e4), s=Math.floor((diff%6e4)/1e3);
   const pad=x=>String(x).padStart(2,'0');
-  el.innerHTML=`⏱ <b>P${up.n}</b> ${d>0?d+'d ':''}${pad(h)}:${pad(m)}:${pad(s)}`;
+  el.innerHTML=`⏱ <b>${matchLabel(up.n)}</b> ${d>0?d+'d ':''}${pad(h)}:${pad(m)}:${pad(s)}`;
 }
 
 /* ---- resumen "Mi quiniela" (modal) ---- */
@@ -329,7 +338,7 @@ async function buildShareCanvas(withLogo){
   }
   x.textAlign='center';
   x.fillStyle='#b59677'; x.font='800 30px Montserrat, sans-serif';
-  x.fillText('PRONOSTICÁ · MUNDIAL 2026', W/2, 300);
+  x.fillText('PRONOSTICÁ · TEMPORADA FUTBOLERA', W/2, 300);
   x.fillStyle='rgba(255,255,255,.85)'; x.font='800 40px Montserrat, sans-serif';
   x.fillText('MI CAMPEÓN', W/2, 432);
   // campeón con su bandera
@@ -503,7 +512,7 @@ async function buildResumenCanvas(withMedia){
   // kicker
   x.textAlign='center';
   x.fillStyle='#b59677'; x.font='800 26px Montserrat, sans-serif';
-  x.fillText('MI QUINIELA · MUNDIAL 2026', W/2, 192);
+  x.fillText('MI QUINIELA · TEMPORADA FUTBOLERA', W/2, 192);
 
   // campeón
   x.fillStyle='rgba(255,255,255,.9)'; x.font='800 30px Montserrat, sans-serif'; x.fillText('TU CAMPEÓN', W/2, 240);
@@ -619,8 +628,8 @@ function slotInfo(slot){
     case 'W':    return {id:rankTeam(slot.g,1), label:'1.º '+slot.g};
     case 'R':    return {id:rankTeam(slot.g,2), label:'2.º '+slot.g};
     case 'T':    return {id:(state.thirds[slot.i]!=null?state.thirds[slot.i]:null), label:'Mejor 3.º'};
-    case 'WIN':  return {id:getWinner(slot.m), label:'Ganador '+slot.m};
-    case 'LOSE': return {id:getLoser(slot.m),  label:'Perdedor '+slot.m};
+    case 'WIN':  return {id:getWinner(slot.m), label:'Ganador '+matchLabel(slot.m)};
+    case 'LOSE': return {id:getLoser(slot.m),  label:'Perdedor '+matchLabel(slot.m)};
   }
 }
 function resultOf(num){
@@ -785,7 +794,7 @@ function matchCard(num){
   const res=resultOf(num);
   const locked=matchLocked(num);
   const card=document.createElement('div'); card.className='match'+(locked?' locked':''); card.dataset.key=key;
-  card.innerHTML=`<div class="match__head"><span>${def.lbl?def.lbl:'Partido '+num}</span><span class="mdate">${fmtFecha(def.d)}</span></div>`;
+  card.innerHTML=`<div class="match__head"><span>${matchLabel(num)}</span><span class="mdate">${fmtFecha(def.d)}</span></div>`;
   card.appendChild(advRow(key,'a',aI,res.win,num,locked));
   card.appendChild(advRow(key,'b',bI,res.win,num,locked));
   card.appendChild(matchFoot(key,num,aI,bI,locked));
