@@ -18,7 +18,7 @@ fecha, una entrada por CI) y el ranking (SQL).
 1. **Authentication → Providers → Email**: dejá habilitado **Email**.
 2. Activá **Magic Link** (sin contraseña). Opcional: desactivar "Confirm email" para que el primer clic ya entre.
 3. **Authentication → URL Configuration → Site URL**: poné la URL del sitio
-   `https://centro-de-estudios-populi.github.io/pronostica-con-stanley/`
+   `https://stanley1913bolivia.github.io/pronostica-con-stanley/`
    y agregala también en **Redirect URLs**.
 
 ## 4. Comprobantes (Storage)

@@ -291,7 +291,7 @@ function share(){
   const txt = champ!=null
     ? `Mi campeón en Pronosticá con Stanley es ${team(champ).name} 🏆 ¿Te animás a pronosticar?`
     : `Armé mi pronóstico en Pronosticá con Stanley 🏆 ¿Te animás?`;
-  const url='https://centro-de-estudios-populi.github.io/pronostica-con-stanley/';
+  const url='https://stanley1913bolivia.github.io/pronostica-con-stanley/';
   if(navigator.share){ navigator.share({title:'Pronosticá con Stanley',text:txt,url}).catch(()=>{}); }
   else { window.open('https://wa.me/?text='+encodeURIComponent(txt+' '+url),'_blank'); }
 }
@@ -434,7 +434,7 @@ function showSharePreview(blob, opts){
   };
   const sb=body.querySelector('#sp-share');
   if(sb) sb.onclick=async()=>{
-    try{ await navigator.share({files:[file], text:txt, url:'https://centro-de-estudios-populi.github.io/pronostica-con-stanley/'}); }catch(e){}
+    try{ await navigator.share({files:[file], text:txt, url:'https://stanley1913bolivia.github.io/pronostica-con-stanley/'}); }catch(e){}
   };
   setTimeout(()=>URL.revokeObjectURL(url), 60000);
 }
