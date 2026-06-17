@@ -100,8 +100,14 @@ form.addEventListener("submit", async (e) => {
       await fetch(CONFIG.APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
     }
     localStorage.setItem("stanley_player", JSON.stringify(player));   // vincula la quiniela (id)
-    localStorage.setItem("ll_session", JSON.stringify({ nick: player.nick, ts: Date.now() }));  // sesión Nick+PIN (mock)
-    goToQuiniela();
+    if (!CONFIG.APPS_SCRIPT_URL) {
+      // DEMO (sin backend): entrás directo a jugar para probar.
+      localStorage.setItem("ll_session", JSON.stringify({ nick: player.nick, pin: form.pin.value.trim(), ts: Date.now() }));
+      goToQuiniela();
+    } else {
+      // REAL: quedás PENDIENTE de alta. No abrimos sesión activa; mostramos confirmación.
+      showInscripcionRecibida(player.nick);
+    }
   } catch (err) {
     resetBtn();
     showError("No pudimos registrar tu inscripción. Revisá tu conexión e intentá de nuevo.");
@@ -110,10 +116,20 @@ form.addEventListener("submit", async (e) => {
 });
 
 function goToQuiniela() {
-  // tras inscribirse, directo a armar la quiniela.
-  // La invitación a la comunidad se ofrece al CERRAR la fase de grupos (en jugar.html).
   submitBtn.textContent = "¡Listo! Abriendo tu pronóstico…";
   window.location.href = "jugar.html";
+}
+
+function showInscripcionRecibida(nick) {
+  form.style.display = "none";
+  const c = document.getElementById("confirm");
+  c.hidden = false;
+  c.querySelector(".confirm__card").innerHTML =
+    '<div class="confirm__check">✓</div>' +
+    '<h2>¡Inscripción recibida!</h2>' +
+    '<p>Validamos tu pago y te damos de alta. Después entrá con tu <b>Nick</b> (<b>' + nick + '</b>) y tu <b>PIN</b> para cargar tus pronósticos.</p>' +
+    '<div class="hero__cta"><a class="btn btn--lg" href="jugar.html">Ir a mis pronósticos →</a></div>';
+  c.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 /* ====== carrusel de fotos de producto (Tu equipo Stanley) ====== */

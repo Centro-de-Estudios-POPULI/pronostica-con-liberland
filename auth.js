@@ -1,18 +1,32 @@
-/* auth.js - sesion Nick+PIN (MOCK, sin backend). Inyecta la barra y maneja modo solo-lectura.
-   Cuando exista backend, reemplazar login() por validacion real contra el servidor. */
+/* auth.js - sesion Nick+PIN. Inyecta la barra de login y maneja el modo solo-lectura.
+   Si hay APPS_SCRIPT_URL (config.js) valida contra el backend; si no, modo demo. */
 (function(){
   var KEY = 'll_session';
+  function backendUrl(){ return (window.STANLEY || {}).APPS_SCRIPT_URL || ''; }
   function getSession(){ try{ return JSON.parse(localStorage.getItem(KEY)); }catch(e){ return null; } }
   function setRO(){ document.documentElement.setAttribute('data-ro', getSession() ? '0' : '1'); }
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function saveSession(nick, pin){ localStorage.setItem(KEY, JSON.stringify({ nick: nick, pin: pin, ts: Date.now() })); render(); }
+  function loginMsg(res){
+    var c = res && res.code;
+    if(c === 'no_existe') return 'Ese Nick no existe. ¿Te inscribiste?';
+    if(c === 'pin_incorrecto') return 'PIN incorrecto.';
+    if(c === 'pendiente') return 'Tu inscripción está pendiente: te activamos cuando confirmemos tu pago.';
+    return 'No pudimos validar tu acceso. Probá de nuevo.';
+  }
   function login(){
     var nick = (document.getElementById('authNick').value||'').trim();
     var pin = (document.getElementById('authPin').value||'').trim();
     if(nick.length < 3){ alert('Ingresa tu Nick (minimo 3 caracteres).'); return; }
     if(!/^\d{4}$/.test(pin)){ alert('El PIN es de 4 digitos.'); return; }
-    // MOCK: sin backend aceptamos cualquier Nick+PIN valido. El backend validara de verdad.
-    localStorage.setItem(KEY, JSON.stringify({ nick: nick, ts: Date.now() }));
-    render();
+    var url = backendUrl();
+    if(!url){ saveSession(nick, pin); return; }   // demo sin backend
+    var btn = document.getElementById('authIn'); if(btn){ btn.disabled = true; btn.textContent = '...'; }
+    var q = new URLSearchParams({ action: 'login', nick: nick, pin: pin });
+    fetch(url + '?' + q.toString()).then(function(r){ return r.json(); }).then(function(res){
+      if(res && res.ok){ saveSession(res.nick || nick, pin); }
+      else { alert(loginMsg(res)); if(btn){ btn.disabled = false; btn.textContent = 'Entrar'; } }
+    }).catch(function(){ alert('No pudimos validar (revisá tu conexión).'); if(btn){ btn.disabled = false; btn.textContent = 'Entrar'; } });
   }
   function render(){
     var bar = document.getElementById('authbar'); if(!bar) return;
