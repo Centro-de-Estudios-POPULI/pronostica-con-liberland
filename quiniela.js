@@ -289,14 +289,14 @@ function openResumen(){
 function share(){
   const champ=getWinner(104);
   const txt = champ!=null
-    ? `Mi campeón en Pronosticá con Stanley es ${team(champ).name} 🏆 ¿Te animás a pronosticar?`
-    : `Armé mi pronóstico en Pronosticá con Stanley 🏆 ¿Te animás?`;
+    ? `Mi campeón en Pronosticá con Liberland es ${team(champ).name} 🏆 ¿Te animás a pronosticar?`
+    : `Armé mi pronóstico en Pronosticá con Liberland 🏆 ¿Te animás?`;
   const url='https://stanley1913bolivia.github.io/pronostica-con-stanley/';
-  if(navigator.share){ navigator.share({title:'Pronosticá con Stanley',text:txt,url}).catch(()=>{}); }
+  if(navigator.share){ navigator.share({title:'Pronosticá con Liberland',text:txt,url}).catch(()=>{}); }
   else { window.open('https://wa.me/?text='+encodeURIComponent(txt+' '+url),'_blank'); }
 }
 
-/* ---- imagen para redes (canvas, marca Stanley) ---- */
+/* ---- imagen para redes (canvas, marca Liberland) ---- */
 const loadImg = src => new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=src; });
 function ensureFonts(){
   if(!document.fonts) return Promise.resolve();
@@ -325,7 +325,7 @@ function drawStoryCTA(ctx, W, H){
   ctx.fillStyle='rgba(255,255,255,.92)'; ctx.font='700 36px Montserrat, sans-serif';
   ctx.fillText('y etiquetá a '+ig, W/2, by+172);
   ctx.fillStyle='rgba(255,255,255,.6)'; ctx.font='600 27px Montserrat, sans-serif';
-  ctx.fillText('Pronosticá con Stanley · stanley1913.bo', W/2, H-58);
+  ctx.fillText('Pronosticá con Liberland', W/2, H-58);
 }
 async function buildShareCanvas(withLogo){
   const W=1080,H=1920;
@@ -340,7 +340,7 @@ async function buildShareCanvas(withLogo){
   // franja Bolivia
   const bw=W/3; x.fillStyle='#DA291C'; x.fillRect(0,0,bw,16);
   x.fillStyle='#F4C300'; x.fillRect(bw,0,bw,16); x.fillStyle='#007A33'; x.fillRect(bw*2,0,bw,16);
-  // logo Stanley (blanco). En HTTPS no contamina; bajo file:// puede tainting → por eso es opcional
+  // logo Liberland (blanco). En HTTPS no contamina; bajo file:// puede tainting → por eso es opcional
   // datos + banderas (en HTTPS/localhost no contaminan; bajo file:// sí)
   const champ=getWinner(104), fin=resultOf(104), third=getWinner(103);
   const flags={};
@@ -350,7 +350,7 @@ async function buildShareCanvas(withLogo){
     arr.forEach((id,i)=> flags[id]=imgs[i]);
   }
   if(withLogo){
-    try{ const logo=await loadImg('assets/logo-stanley-horizontal.png');
+    try{ const logo=await loadImg('assets/logo-liberland-white.png');
       drawLogoFitted(x, logo, W/2, 100, 420, 232);
     }catch(e){}
   }
@@ -405,12 +405,12 @@ async function shareImage(){
 function defaultShareText(){
   const champ=getWinner(104);
   return champ!=null
-    ? `Mi campeón en Pronosticá con Stanley es ${team(champ).name} 🏆 ¿Te animás?`
-    : 'Armé mi pronóstico en Pronosticá con Stanley 🏆';
+    ? `Mi campeón en Pronosticá con Liberland es ${team(champ).name} 🏆 ¿Te animás?`
+    : 'Armé mi pronóstico en Pronosticá con Liberland 🏆';
 }
 function showSharePreview(blob, opts){
   opts = opts||{};
-  const filename = opts.filename || 'mi-campeon-stanley.png';
+  const filename = opts.filename || 'mi-campeon-liberland.png';
   const title    = opts.title    || '📲 Compartí tu campeón';
   const txt      = opts.text     || defaultShareText();
   const url=URL.createObjectURL(blob);
@@ -420,7 +420,7 @@ function showSharePreview(blob, opts){
   const body=document.getElementById('modal-body');
   body.innerHTML=`
     <h3 class="modal__h">${title}</h3>
-    <img class="share-preview" src="${url}" alt="${title} · Pronosticá con Stanley" />
+    <img class="share-preview" src="${url}" alt="${title} · Pronosticá con Liberland" />
     <p class="share-cta">📲 Subila a tu <b>historia de Instagram</b> y etiquetá a <b>${ig}</b></p>
     <div class="modal__actions">
       <button class="btn btn--sm" id="sp-dl">⬇️ Descargar</button>
@@ -522,9 +522,9 @@ async function buildResumenCanvas(withMedia){
   }
 
   // logo o wordmark
-  function drawWordmark(){ x.textAlign='center'; x.fillStyle='#fff'; x.font='400 56px Anton, sans-serif'; x.fillText('STANLEY 1913', W/2, 112); }
+  function drawWordmark(){ x.textAlign='center'; x.fillStyle='#fff'; x.font='400 56px Anton, sans-serif'; x.fillText('LIBERLAND', W/2, 112); }
   if(withMedia){
-    try{ const logo=await loadImg('assets/logo-stanley-horizontal.png');
+    try{ const logo=await loadImg('assets/logo-liberland-white.png');
       drawLogoFitted(x, logo, W/2, 38, 300, 112);
     }catch(e){ drawWordmark(); }
   } else { drawWordmark(); }
@@ -610,10 +610,10 @@ async function shareResumen(){
   const champ=getWinner(104);
   showSharePreview(blob, {
     title:'📲 Compartí tu pronóstico',
-    filename:'mi-pronostico-stanley.png',
+    filename:'mi-pronostico-liberland.png',
     text: champ!=null
-      ? `Mi pronóstico Stanley — campeón: ${team(champ).name} 🏆 ¿Te animás a pronosticar?`
-      : 'Armé mi pronóstico en Pronosticá con Stanley 🏆 ¿Te animás?'
+      ? `Mi pronóstico Liberland — campeón: ${team(champ).name} 🏆 ¿Te animás a pronosticar?`
+      : 'Armé mi pronóstico en Pronosticá con Liberland 🏆 ¿Te animás?'
   });
 }
 
@@ -1023,7 +1023,7 @@ function basePronostico(){
   const wrap=document.createElement('div'); wrap.className='base-pron';
   wrap.innerHTML=`
     <h3 class="base-pron__title">Para cerrar tu fase de grupos</h3>
-    <p class="base-pron__lead">Dos datos del Ranking General Stanley: el desempate y tu campeón de referencia.</p>
+    <p class="base-pron__lead">Dos datos del Ranking General Liberland: el desempate y tu campeón de referencia.</p>
     <div class="base-pron__grid">
       <label class="base-field">
         <span>⚽ Total de goles de la fase de grupos <small>(desempate)</small></span>
@@ -1119,7 +1119,7 @@ function openGroupsDoneModal(){
     <p class="modal__p">Cerraste tu <b>fase de grupos</b>: ya estás dentro de la Etapa 1. Te quedan dos cosas:</p>
     <ul class="nostra-list">
       <li>💬 <b>Comunidad WhatsApp</b> — rankings, recordatorios y avisos de cada etapa.</li>
-      <li>🔮 <b>Nostradamus</b> — predecí TODO el cuadro de una vez y competí por un kit Stanley.</li>
+      <li>🔮 <b>Nostradamus</b> — predecí TODO el cuadro de una vez y competí por un kit Liberland.</li>
     </ul>
     ${waNote}
     <div class="modal__actions modal__actions--stack">
@@ -1140,7 +1140,7 @@ function openNostradamusModal(){
     <p class="modal__p">¿Te animás a predecir <b>todo el cuadro</b> —de 16avos a la final— ahora mismo, en base a tus clasificados?</p>
     <ul class="nostra-list">
       <li>🎯 Sellás tu bracket completo de una sola vez.</li>
-      <li>🏆 El que más se acerque gana un <b>kit Stanley</b> especial.</li>
+      <li>🏆 El que más se acerque gana un <b>kit Liberland</b> especial.</li>
       <li>⚠️ Es un compromiso: <b>no podrás editarlo</b> después.</li>
       <li>➕ Igual seguís sumando puntos ronda por ronda en el ranking general.</li>
     </ul>
@@ -1162,8 +1162,8 @@ function renderNostra(){
       <span class="stage__kicker">Modo Nostradamus</span>
       <h2>🔮 Tu cuadro completo</h2>
       <p>${sent
-        ? 'Tu bracket quedó sellado. Competís por el kit Stanley con la predicción más certera; seguís sumando puntos ronda por ronda.'
-        : 'Predecí de 16avos a la final con tus clasificados. Al confirmar, queda sellado y entrás a la competencia por el kit Stanley.'}</p></div>`;
+        ? 'Tu bracket quedó sellado. Competís por el kit Liberland con la predicción más certera; seguís sumando puntos ronda por ronda.'
+        : 'Predecí de 16avos a la final con tus clasificados. Al confirmar, queda sellado y entrás a la competencia por el kit Liberland.'}</p></div>`;
   KO_STAGES.forEach(sid=>{
     const s=STAGES.find(x=>x.id===sid);
     const h=document.createElement('h3'); h.className='nostra-round-title'; h.textContent=s.title;
@@ -1195,7 +1195,7 @@ function confirmNostra(){
   if(!nostraComplete() || state.nostradamus.sent) return;
   openConfirmModal({
     title:'¿Sellar tu Nostradamus?',
-    body:'Tu cuadro completo quedará <b>bloqueado</b>: no podrás editarlo. Competís por el kit Stanley con la predicción más certera.',
+    body:'Tu cuadro completo quedará <b>bloqueado</b>: no podrás editarlo. Competís por el kit Liberland con la predicción más certera.',
     ok:'Sí, sellar',
     onOk:()=>{
       state.nostradamus={sent:true, at:new Date().toISOString()};

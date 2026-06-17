@@ -3,32 +3,29 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Ranking · Pronosticá con Stanley</title>
-<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
-<link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+<title>Ranking · Pronosticá con Liberland</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
+<script>(function(){try{var u=new URLSearchParams(location.search).get("theme");var t=u||localStorage.getItem("ll_theme");if(t==="black")document.documentElement.setAttribute("data-theme","black");}catch(e){}function bind(){var b=document.getElementById("themeToggle");if(!b)return;b.addEventListener("click",function(){var on=document.documentElement.getAttribute("data-theme")==="black";if(on){document.documentElement.removeAttribute("data-theme");try{localStorage.setItem("ll_theme","light")}catch(e){}}else{document.documentElement.setAttribute("data-theme","black");try{localStorage.setItem("ll_theme","black")}catch(e){}}});}if(document.readyState!=="loading")bind();else document.addEventListener("DOMContentLoaded",bind);})();</script>
 </head>
 <body>
 <div class="flagbar" aria-hidden="true"></div>
 <header class="nav">
-  <img class="nav__logo" src="assets/logo-stanley-horizontal.png" alt="Stanley 1913" />
-  <nav class="nav__links">
+  <img class="nav__logo" src="assets/logo-liberland-white.png" alt="Liberland" />
+  <nav class="nav__links"><button class="nav__theme" id="themeToggle" type="button" aria-label="Modo black" title="Modo black / claro"></button>
     <a class="nav__link" href="index.html">Inicio</a>
     <a class="nav__link" href="jugar.html">Mi pronóstico</a>
     <a class="nav__link nav__link--etapa2" href="etapa2.html">Etapa 2</a>
-    <a class="nav__link nav__link--hide-mobile" href="https://stanley1913.bo/collections/convocados-stanley" target="_blank" rel="noopener">Tienda</a>
-  </nav>
+</nav>
 </header>
 
 <section class="section">
   <h2 class="h2">Rankings</h2>
-  <p class="section__lead">Dos competencias: el <strong>Ranking General Stanley</strong> y el <strong>Modo Nostradamus</strong>. Se actualizan al cerrar cada etapa.</p>
+  <p class="section__lead">Dos competencias: el <strong>Ranking General Liberland</strong> y el <strong>Modo Nostradamus</strong>. Se actualizan al cerrar cada etapa.</p>
   <div class="rank-tabs">
-    <button class="rank-tab active" data-tab="general">Ranking General Stanley</button>
+    <button class="rank-tab active" data-tab="general">Ranking General Liberland</button>
     <button class="rank-tab" data-tab="nostra">Modo Nostradamus</button>
   </div>
   <p id="lb-updated" class="lb-updated"></p>
@@ -39,9 +36,9 @@
 <section class="section section--cream" id="puntajes">
   <h2 class="h2">¿Cómo se puntúa?</h2>
 
-  <!-- Ranking General Stanley -->
+  <!-- Ranking General Liberland -->
   <div class="score-block">
-    <h3 class="score-block__title">Ranking General Stanley <span class="score-block__tag score-block__tag--main">Competencia principal</span></h3>
+    <h3 class="score-block__title">Ranking General Liberland <span class="score-block__tag score-block__tag--main">Competencia principal</span></h3>
     <p class="score-block__note">Cada selección que clasifica suma 1 punto. El corte define quiénes avanzan.</p>
     <div class="ptable-wrap" style="margin-top:18px">
       <table class="ptable">
@@ -55,7 +52,7 @@
         </tbody>
       </table>
     </div>
-    <p class="score-block__note">El Ranking General continúa con nuevas dinámicas por etapa, comunicadas en la comunidad de Stanley Bolivia.</p>
+    <p class="score-block__note">El Ranking General continúa con nuevas dinámicas por etapa, comunicadas en la comunidad de Liberland Bolivia.</p>
   </div>
 
   <!-- Modo Nostradamus -->
@@ -73,14 +70,14 @@
     </div>
   </div>
 
-  <p class="section__foot">El Modo Nostradamus es opcional y paralelo: no reemplaza ni reduce la importancia del Ranking General Stanley.</p>
+  <p class="section__foot">El Modo Nostradamus es opcional y paralelo: no reemplaza ni reduce la importancia del Ranking General Liberland.</p>
 </section>
 
 <footer class="footer pitch pitch--dark">
-  <img class="footer__logo" src="assets/logo-stanley-vertical.png" alt="Stanley" />
+  <img class="footer__logo" src="assets/logo-liberland-white.png" alt="Liberland" />
   <div class="footer__legal">
-    <p>Promoción de Stanley Bolivia (Openbrands S.R.L.). Consultas: <a href="mailto:info@openbrands.com.bo">info@openbrands.com.bo</a></p>
-    <p class="footer__copy">© 2026 Openbrands S.R.L. · Stanley 1913 Bolivia</p>
+    <p>Promoción de Liberland Bolivia. Consultas: WhatsApp <a href="https://wa.me/59178857158" target="_blank" rel="noopener">788 57158</a> / <a href="https://wa.me/59177198363" target="_blank" rel="noopener">771 98363</a></p>
+    <p class="footer__copy">© 2026 Liberland Bolivia</p>
   </div>
 </footer>
 

@@ -41,7 +41,7 @@ const form = document.getElementById("form");
 const errorEl = document.getElementById("form-error");
 const submitBtn = document.getElementById("submit");
 function showError(msg) { errorEl.textContent = msg; errorEl.hidden = false; errorEl.scrollIntoView({ behavior: "smooth", block: "center" }); }
-function resetBtn() { submitBtn.disabled = false; submitBtn.textContent = "Inscribirme y armar mi pronóstico"; }
+function resetBtn() { submitBtn.disabled = false; submitBtn.textContent = "Inscribirme y entrar"; }
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -51,32 +51,30 @@ form.addEventListener("submit", async (e) => {
     if (el.type === "file" || el.type === "checkbox") continue;
     if (!el.value.trim()) { showError("Completá todos los campos obligatorios."); el.focus(); return; }
   }
-  if (!form.canal.value) { showError("Elegí tu canal de compra."); form.canal.focus(); return; }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.value.trim())) { showError("Revisá tu correo: no parece válido."); form.email.focus(); return; }
+  if (form.nick.value.trim().length < 3) { showError("Elegí un Nickname de al menos 3 caracteres."); form.nick.focus(); return; }
+  if (!/^\d{4}$/.test(form.pin.value.trim())) { showError("Tu PIN debe ser de 4 dígitos."); form.pin.focus(); return; }
   if (form.whatsapp.value.replace(/\D/g, "").length < 7) { showError("Revisá tu WhatsApp: falta el número."); form.whatsapp.focus(); return; }
-  if (!fileData) return showError("Subí tu factura o respaldo de compra.");
+  if (!fileData) return showError("Subí la captura de tu pago.");
   if (!document.getElementById("terminos").checked)  return showError("Tenés que aceptar las bases y la veracidad de tus datos.");
   if (!document.getElementById("validacion").checked) return showError("Tenés que aceptar la validación de tu inscripción.");
   if (!document.getElementById("datos").checked)      return showError("Tenés que aceptar el tratamiento de datos y comunicaciones.");
 
+  const nick = form.nick.value.trim();
   const player = {
     id: newId(),
+    nick,
     nombre: form.nombre.value.trim(),
-    documento: form.documento.value.trim(),
-    email: form.email.value.trim()
+    documento: form.documento.value.trim()
   };
-  const comprobanteNro = form.comprobante_nro.value.trim();
   const payload = {
     action: "register",
     id: player.id,
+    nick,
+    pin: form.pin.value.trim(),
     nombre: form.nombre.value.trim(),
     apellido: form.apellido.value.trim(),
     documento: form.documento.value.trim(),
     whatsapp: form.whatsapp.value.trim(),
-    email: form.email.value.trim(),
-    ciudad: form.ciudad.value.trim(),
-    canal: form.canal.value,
-    comprobante_nro: comprobanteNro,
     enviado: new Date().toISOString(),
     comprobante: fileData
   };
@@ -91,10 +89,9 @@ form.addEventListener("submit", async (e) => {
       // Chequeo previo de duplicado (GET es legible cross-origin, como el ranking).
       // El servidor igual deduplica al guardar; esto es solo para avisar al usuario.
       try {
-        const q = new URLSearchParams({ action: "existe", ci: player.documento, comp: comprobanteNro });
+        const q = new URLSearchParams({ action: "existe", nick });
         const chk = await fetch(CONFIG.APPS_SCRIPT_URL + "?" + q.toString()).then(r => r.json());
-        if (chk && chk.ci)   { resetBtn(); return showError("Ese documento (CI) ya está inscrito. Si ya participaste, entrá a tu pronóstico desde el menú."); }
-        if (chk && chk.comp) { resetBtn(); return showError("Ese número de comprobante ya fue registrado. Cada compra puede inscribirse una sola vez."); }
+        if (chk && chk.nick) { resetBtn(); return showError("Ese Nickname ya está en uso. Elegí otro."); }
       } catch (e) { console.warn("Chequeo de duplicado no disponible; continúo (el servidor deduplica igual).", e); }
 
       submitBtn.textContent = "Enviando…";
@@ -102,7 +99,8 @@ form.addEventListener("submit", async (e) => {
       // El id lo generamos en el cliente, así que no dependemos de leer la respuesta.
       await fetch(CONFIG.APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
     }
-    localStorage.setItem("stanley_player", JSON.stringify(player));   // vincula la quiniela
+    localStorage.setItem("stanley_player", JSON.stringify(player));   // vincula la quiniela (id)
+    localStorage.setItem("ll_session", JSON.stringify({ nick: player.nick, ts: Date.now() }));  // sesión Nick+PIN (mock)
     goToQuiniela();
   } catch (err) {
     resetBtn();

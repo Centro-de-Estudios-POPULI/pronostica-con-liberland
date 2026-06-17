@@ -50,7 +50,7 @@ a{color:inherit}
 /* ---- nav (estilo tienda: negro, limpio) ---- */
 .nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
   gap:16px;padding:14px 24px;background:var(--ink)}
-.nav__logo{height:32px;width:auto}
+.nav__logo{height:62px;width:auto}
 .nav__links{display:flex;align-items:center;gap:22px}
 .nav__link{font-family:'Montserrat',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1px;
   font-size:12.5px;color:#fff;text-decoration:none;opacity:.9;transition:color .15s,opacity .15s}
@@ -386,7 +386,7 @@ html[data-phase="eliminatorias"] .only-inscripcion{display:none}
   .cd__item span{font-size:30px}
   .teams{grid-template-columns:repeat(auto-fill,minmax(108px,1fr))}
   .nav{gap:8px;padding:12px 14px}
-  .nav__logo{height:24px}
+  .nav__logo{height:46px}
   .nav__links{gap:11px}
   .nav__link{font-size:11.5px;letter-spacing:.5px}
   .nav__link--hide-mobile{display:none}
@@ -395,3 +395,137 @@ html[data-phase="eliminatorias"] .only-inscripcion{display:none}
   .score-row{grid-template-columns:1fr 58px 58px;padding:12px 16px;gap:8px}
   .score-v,.score-row--final .score-v{font-size:15px}
 }
+
+
+/* ===================== MODO BLACK (toggle) ===================== */
+.nav__theme{width:30px;height:30px;border-radius:50%;border:2px solid #fff;padding:0;cursor:pointer;
+  background:conic-gradient(#fff 0 50%, rgba(255,255,255,.08) 0 100%);flex:0 0 auto;margin-right:6px;
+  transition:transform .2s ease,opacity .15s;opacity:.85}
+.nav__theme:hover{opacity:1;transform:scale(1.08)}
+[data-theme="black"] .nav__theme{transform:rotate(180deg)}
+
+[data-theme="black"]{
+  --paper:#101113; --mist:#17181b; --text:#cfd2d6; --text-soft:#8a8f96;
+  --ink:#e9eaec; --line-soft:#2a2d33; --shadow:0 18px 50px rgba(0,0,0,.6);
+  --line:rgba(255,255,255,.10); --line-strong:rgba(255,255,255,.22);
+}
+/* --paper se usaba como TEXTO claro (sobre cancha) -> mantener claro */
+[data-theme="black"] .pitch, [data-theme="black"] .h2--light{color:#f3f4f6}
+/* cancha (hero/registro/footer) a oscuro SIN tocar los verdes de acento (texto) */
+[data-theme="black"] .pitch{background:repeating-linear-gradient(90deg,#141414 0 70px,#0e0e0e 70px 140px)}
+[data-theme="black"] .pitch--dark{background:repeating-linear-gradient(90deg,#0b0b0b 0 70px,#070707 70px 140px)}
+/* --ink se usa como FONDO oscuro en estos -> mantener oscuro */
+[data-theme="black"] .nav,
+[data-theme="black"] .kicker,
+[data-theme="black"] .prize .tag,
+[data-theme="black"] .counter,
+[data-theme="black"] .chip.sel,
+[data-theme="black"] .rule-band,
+[data-theme="black"] .ptable th,
+[data-theme="black"] .bases-modal__head,
+[data-theme="black"] .rank-tab.active{background:#0a0a0a;border-color:#0a0a0a}
+[data-theme="black"] .kicker--dark{color:#141414}
+/* superficies con #fff hardcodeado -> oscuras */
+[data-theme="black"] .phase-banner__cta{background:#1d2024;color:var(--tan)}
+[data-theme="black"] .btn--ghost:hover{background:#1d2024;color:#fff}
+[data-theme="black"] .prize__media{background:#1a1c1f}
+[data-theme="black"] .field input,
+[data-theme="black"] .field select,
+[data-theme="black"] .field textarea,
+[data-theme="black"] .file-hint,
+[data-theme="black"] .team,
+[data-theme="black"] .chip,
+[data-theme="black"] .rank-tab{background:#1a1c1f;border-color:#2f333a;color:var(--text)}
+/* afordancia de "seleccionado" visible en oscuro */
+[data-theme="black"] .team.sel,
+[data-theme="black"] .counter.full{background:#1f7a4d;border-color:#1f7a4d;color:#fff}
+[data-theme="black"] .form-error{background:#3a1618;color:#ffb3b0;border-color:#5a2226}
+[data-theme="black"] .rank-preview{border-color:#2f333a}
+/* ============================================================== */
+
+/* --- MODO BLACK: componentes del juego (jugar.css) --- */
+[data-theme="black"] .group,
+[data-theme="black"] .step-btn,
+[data-theme="black"] .thirds,
+[data-theme="black"] .third,
+[data-theme="black"] .match,
+[data-theme="black"] .chip-prog,
+[data-theme="black"] .modal__card,
+[data-theme="black"] .scorebtn,
+[data-theme="black"] .score,
+[data-theme="black"] .base-pron,
+[data-theme="black"] .base-field input,
+[data-theme="black"] .base-field select,
+[data-theme="black"] .tb-opt{background:#16181b;border-color:#2f333a;color:var(--text)}
+[data-theme="black"] .gamebar,
+[data-theme="black"] .rg-head,
+[data-theme="black"] .rg-g,
+[data-theme="black"] .group__head,
+[data-theme="black"] #toast,
+[data-theme="black"] .step-btn.active,
+[data-theme="black"] .scorebtn.set,
+[data-theme="black"] .tb-opt.sel{background:#0a0a0a;border-color:#0a0a0a;color:#fff}
+[data-theme="black"] .stage__kicker{background:#0a0a0a;color:var(--tan)}
+[data-theme="black"] .progress-global{background:#23262b}
+[data-theme="black"] .match.locked .match__head{background:#23201b;color:var(--tan)}
+[data-theme="black"] .modal__warn{background:#3a1618;color:#ffb3b0;border-color:#5a2226}
+[data-theme="black"] .grow:hover,[data-theme="black"] .mteam.pick:hover{background:#1f2227}
+[data-theme="black"] .locked-msg{border-color:#2f333a}
+[data-theme="black"] .scorebtn{color:#e6cda9}
+/* ===================================================== */
+
+/* ===== Premios que escalan (tiers) ===== */
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:46px}
+@media(max-width:760px){.tiers{grid-template-columns:1fr}}
+.tier{background:var(--paper);border:1px solid var(--line-soft);border-radius:16px;padding:26px 22px;
+  box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;text-align:center}
+.tier--mid{border-color:var(--tan)}
+.tier--max{border:2px solid var(--green)}
+.tier__tag{font-family:'Montserrat',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+  font-size:11px;color:var(--tan-dark);background:var(--mist);padding:6px 14px;border-radius:999px}
+.tier--max .tier__tag{color:#fff;background:var(--green)}
+.tier__n{font-family:'Anton',sans-serif;font-size:34px;color:var(--ink);margin-top:14px;line-height:1}
+.tier__n small{display:block;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:var(--text-soft);
+  text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.tier__pool{font-family:'Montserrat',sans-serif;font-weight:900;font-size:30px;color:var(--green-2);margin-top:16px}
+.tier__pool-lbl{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--text-soft);font-weight:700}
+.tier__list{list-style:none;margin:18px 0 0;padding:18px 0 0;width:100%;border-top:1px solid var(--line-soft);
+  display:flex;flex-direction:column;gap:9px}
+.tier__list li{display:flex;justify-content:space-between;gap:10px;font-size:14px;color:var(--text)}
+.tier__list li b{color:var(--ink);font-family:'Montserrat',sans-serif;font-weight:800}
+.tier__list li span{color:var(--tan-dark);font-weight:700;font-family:'Montserrat',sans-serif}
+
+/* ===== pago QR (registro) ===== */
+.pay-qr{display:flex;gap:16px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.pay-qr__box{flex:0 0 auto;width:120px;height:120px;border:2px dashed var(--line-soft);border-radius:12px;
+  display:grid;place-items:center;text-align:center;color:var(--text-soft);background:var(--mist)}
+.pay-qr__box span{display:block;font-weight:800;font-family:'Montserrat',sans-serif;font-size:13px;color:var(--ink)}
+.pay-qr__box small{font-size:11px}
+.pay-qr__txt{font-size:14px;color:var(--text);line-height:1.5}
+.pay-qr__txt b{color:var(--ink)}
+.pay-qr__img{flex:0 0 auto;display:flex;flex-direction:column;gap:8px;align-items:center}
+.pay-qr__img img{width:220px;max-width:46vw;height:auto;background:#fff;border:1px solid var(--line-soft);
+  border-radius:12px;padding:8px;box-shadow:0 6px 18px rgba(0,0,0,.10)}
+.pay-qr__dl{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;
+  font-family:'Montserrat',sans-serif;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.5px;
+  padding:9px 14px;border-radius:999px;background:var(--tan);color:#fff;text-decoration:none;transition:background .15s}
+.pay-qr__dl:hover{background:var(--tan-dark)}
+.pay-qr__info{flex:1;min-width:220px}
+.pay-qr__wa{margin-top:12px;font-size:13.5px;color:var(--text)}
+.pay-qr__wa a{color:var(--tan-dark);font-weight:800;white-space:nowrap}
+
+/* ===== barra Nick+PIN (login mock) + modo solo lectura ===== */
+.authbar{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  background:var(--mist);border-bottom:1px solid var(--line-soft);padding:10px 16px;font-size:13.5px;color:var(--text)}
+.authbar__who{font-weight:700;color:var(--ink)}
+.authbar__who b{color:var(--green-2)}
+.authbar__msg{font-family:'Montserrat',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  font-size:12px;color:var(--tan-dark)}
+.authbar input{font-family:inherit;font-size:14px;padding:8px 11px;border:1.5px solid var(--line-soft);
+  border-radius:8px;background:var(--paper);color:var(--ink);width:118px}
+.authbar input:focus{border-color:var(--tan);outline:none}
+.authbar__btn{font-family:'Montserrat',sans-serif;font-weight:800;font-size:12px;text-transform:uppercase;
+  letter-spacing:.5px;padding:8px 16px;border-radius:999px;border:0;background:var(--tan);color:#fff;cursor:pointer}
+.authbar__btn:hover{background:var(--tan-dark)}
+/* modo solo lectura: atenua/inhabilita acciones de guardado (mock) */
+[data-ro="1"] .submit-bar .btn,[data-ro="1"] .scorebtn{opacity:.45;pointer-events:none}
